@@ -1,0 +1,9 @@
+{
+  "app_name": "Clone X",
+  "subscribe": "S'abonner",
+  "current_plan": "Forfait actuel",
+  "free_plan": "Gratuit (1 tweet/jour)",
+  "login": "Connexion",
+  "logout": "Déconnexion",
+  "loading": "Chargement..."
+}

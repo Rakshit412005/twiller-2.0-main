@@ -1,0 +1,10 @@
+{
+  "app_name": "X Clone",
+  "subscribe": "Subscribe",
+  "current_plan": "Current Plan",
+  "free_plan": "Free (1 tweet/day)",
+  "login": "Login",
+  "logout": "Logout",
+  "loading": "Loading...",
+  "premium_active": "Premium Active"
+}
