@@ -173,7 +173,7 @@ const TweetComposer = ({ onTweetPosted }: any) => {
         audio: audioUrl,
       });
 
-      onTweetPosted(res.data);
+      onTweetPosted(res.data,true);
 
       setContent("");
       setImageUrl("");

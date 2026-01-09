@@ -122,9 +122,7 @@ const Feed = () => {
       setTweets(res.data);
 
       // 🔔 check existing tweets
-      res.data.forEach((tweet: any) => {
-        triggerNotificationIfMatched(tweet,notificationsEnabled);
-      });
+     
     } catch (error) {
       console.error(error);
     } finally {
