@@ -5,5 +5,26 @@
   "free_plan": "免费（每天1条）",
   "login": "登录",
   "logout": "退出",
-  "loading": "加载中..."
+  "loading": "加载中...",
+   "post": "发布",
+
+  "nav": {
+    "home": "主页",
+    "explore": "探索",
+    "notifications": "通知",
+    "messages": "消息",
+    "bookmarks": "书签",
+    "profile": "个人资料",
+    "more": "更多"
+  },
+
+  "enable_notifications": "启用通知",
+  "subscribe_premium": "订阅高级版",
+  "search": "搜索",
+  "for_you": "为你推荐",
+  "following": "正在关注",
+  "whats_happening": "正在发生什么？",
+  "subscribe_description": "订阅以解锁新功能，如果符合条件，还可获得收入分成。",
+  
+  "show_more": "显示更多"
 }

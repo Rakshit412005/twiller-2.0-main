@@ -5,5 +5,24 @@
   "free_plan": "फ्री (1 ट्वीट/दिन)",
   "login": "लॉगिन",
   "logout": "लॉगआउट",
-  "loading": "लोड हो रहा है..."
+  "loading": "लोड हो रहा है...",
+  "post": "पोस्ट करें",
+    "nav": {
+    "home": "होम",
+    "explore": "खोजें",
+    "notifications": "सूचनाएं",
+    "messages": "संदेश",
+    "bookmarks": "बुकमार्क",
+    "profile": "प्रोफ़ाइल",
+    "more": "और"
+},
+  "enable_notifications": "सूचनाएं सक्षम करें",
+  "subscribe_premium": "प्रीमियम सब्सक्राइब करें",
+  "search": "खोजें",
+  "for_you": "आपके लिए",
+  "following": "फॉलो कर रहे हैं",
+  "whats_happening": "क्या हो रहा है?",
+  "subscribe_description": "नई सुविधाओं को अनलॉक करने के लिए सब्सक्राइब करें और यदि पात्र हों तो राजस्व का हिस्सा प्राप्त करें।",
+  
+  "show_more": "और दिखाएं"
 }

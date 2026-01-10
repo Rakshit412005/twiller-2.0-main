@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 
 const suggestions = [
@@ -53,7 +54,7 @@ export default function RightSidebar() {
       <div className="relative">
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
         <Input
-          placeholder="Search"
+          placeholder={t("search")}
           className="pl-12 bg-gray-900 border-gray-800 text-white placeholder-gray-400 rounded-full py-3"
         />
       </div>
@@ -62,11 +63,10 @@ export default function RightSidebar() {
       <Card className="bg-gray-900 border-gray-800">
         <CardContent className="p-4">
           <h3 className="text-white text-xl font-bold mb-2">
-            Subscribe to Premium
+            {t("subscribe_premium")}
           </h3>
           <p className="text-gray-400 text-sm mb-4">
-            Subscribe to unlock new features and if eligible, receive a share of
-            revenue.
+            {t("subscribe_description")}
           </p>
 
           <Button
@@ -79,7 +79,7 @@ export default function RightSidebar() {
           </Button>
           {user && (
             <p className="mt-3 text-sm text-gray-400">
-              Current Plan:{" "}
+              {t("current_plan")}:{" "}
               <span className="text-white font-semibold">
                 {PLAN_INFO[user.plan]}
               </span>

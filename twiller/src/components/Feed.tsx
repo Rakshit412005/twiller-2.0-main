@@ -6,6 +6,7 @@ import TweetCard from "./TweetCard";
 import TweetComposer from "./TweetComposer";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -111,6 +112,8 @@ const tweets: Tweet[] = [
   },
 ];
 const Feed = () => {
+  const { t } = useTranslation();
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const [tweets, setTweets] = useState<any>([]);
@@ -144,7 +147,7 @@ const Feed = () => {
     <div className="min-h-screen">
       <div className="sticky top-0 bg-black/90 backdrop-blur-md border-b border-gray-800 z-10">
         <div className="px-4 py-3">
-          <h1 className="text-xl font-bold text-white">Home</h1>
+          <h1 className="text-xl font-bold text-white">{t("nav.home")}</h1>
         </div>
 
         <Tabs defaultValue="foryou" className="w-full">
@@ -153,7 +156,7 @@ const Feed = () => {
               value="foryou"
               className="data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-1 data-[state=active]:border-blue-100 data-[state=active]:rounded-none text-gray-400 hover:bg-gray-900/50 py-4 font-semibold"
             >
-              For you
+              {t("for_you")}
             </TabsTrigger>
             <TabsTrigger
               value="following"

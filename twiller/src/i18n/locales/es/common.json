@@ -5,5 +5,30 @@
   "free_plan": "Gratis (1 tweet/día)",
   "login": "Iniciar sesión",
   "logout": "Cerrar sesión",
-  "loading": "Cargando..."
+  "loading": "Cargando...",
+
+   "post": "Publicar",
+
+  "nav": {
+    "home": "Inicio",
+    "explore": "Explorar",
+    "notifications": "Notificaciones",
+    "messages": "Mensajes",
+    "bookmarks": "Marcadores",
+    "profile": "Perfil",
+    "more": "Más"
+  },
+
+  "enable_notifications": "Activar notificaciones",
+  "subscribe_premium": "Suscribirse a Premium",
+  "search": "Buscar",
+  "for_you": "Para ti",
+  "following": "Siguiendo",
+  "whats_happening": "¿Qué está pasando?",
+  "subscribe_description": "Suscríbete para desbloquear nuevas funciones y, si eres elegible, recibir una parte de los ingresos.",
+  
+  "show_more": "Mostrar más"
+
+
+ 
 }

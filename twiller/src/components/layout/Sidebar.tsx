@@ -83,7 +83,7 @@ export default function Sidebar({ currentPage = 'home', onNavigate }: SidebarPro
         
         <div className="mt-8 px-2">
           <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-full text-lg">
-            Post
+            {t("post")}
           </Button>
         </div>
         

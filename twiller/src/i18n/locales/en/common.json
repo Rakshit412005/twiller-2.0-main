@@ -7,6 +7,7 @@
   "logout": "Logout",
   "loading": "Loading...",
   "premium_active": "Premium Active",
+  "post": "Post",
 
   
   "nav": {
@@ -17,7 +18,16 @@
     "bookmarks": "Bookmarks",
     "profile": "Profile",
     "more": "More"
-  }
+  },
+  "enable_notifications": "Enable Notifications",
+  "subscribe_premium": "Subscribe to Premium",
+  "search": "Search",
+  "for_you": "For you",
+  "following": "Following",
+  "whats_happening": "What's happening?",
+  "subscribe_description": "Subscribe to unlock new features and if eligible, receive a share of revenue.",
+  
+  "show_more": "Show more"
 
 
 }
