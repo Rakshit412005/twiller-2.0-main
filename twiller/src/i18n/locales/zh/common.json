@@ -26,5 +26,17 @@
   "whats_happening": "正在发生什么？",
   "subscribe_description": "订阅以解锁新功能，如果符合条件，还可获得收入分成。",
   
-  "show_more": "显示更多"
+  "show_more": "显示更多",
+  
+  "follow": "关注",
+  "terms_of_service": "服务条款",
+  "privacy_policy": "隐私政策",
+  "cookie_policy": "Cookie 政策",
+  "accessibility": "无障碍功能",
+  "ads_info": "广告信息",
+  "copyright": "© 2024 X 公司",
+  "you_might_like":"你可能会喜欢这个。",
+  "language":"语言"
+
+
 }

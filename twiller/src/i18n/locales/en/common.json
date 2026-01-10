@@ -9,6 +9,17 @@
   "premium_active": "Premium Active",
   "post": "Post",
 
+  "follow": "Follow",
+  "terms_of_service": "Terms of Service",
+  "privacy_policy": "Privacy Policy",
+  "cookie_policy": "Cookie Policy",
+  "accessibility": "Accessibility",
+  "ads_info": "Ads info",
+  "copyright": "© 2024 X Corp.",
+  "you_might_like": "You might like",
+  "language":"Language",
+
+
   
   "nav": {
     "home": "Home",

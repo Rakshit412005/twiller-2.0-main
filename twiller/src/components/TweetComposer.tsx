@@ -6,6 +6,7 @@ import { Card, CardContent } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   Smile,
@@ -25,6 +26,7 @@ const MAX_AUDIO_DURATION = 300; // seconds
 
 const TweetComposer = ({ onTweetPosted }: any) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [content, setContent] = useState("");
   const [imageurl, setImageUrl] = useState("");
@@ -207,7 +209,7 @@ const TweetComposer = ({ onTweetPosted }: any) => {
           <div className="flex-1">
             <form onSubmit={handleSubmit}>
               <Textarea
-                placeholder="What's happening?"
+                placeholder= {t("whats_happening")}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="bg-transparent border-none text-xl text-white resize-none min-h-[120px]"
@@ -253,7 +255,7 @@ const TweetComposer = ({ onTweetPosted }: any) => {
                   disabled={isLoading}
                   className="bg-blue-500 rounded-full px-6"
                 >
-                  Post
+                  {t("post")}
                 </Button>
               </div>
 

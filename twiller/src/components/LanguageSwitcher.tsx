@@ -22,7 +22,7 @@ const languages = [
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
-
+  const { t } = useTranslation();
   const handleChange = async (lang: string) => {
     // OTP logic will go here later
     await i18n.changeLanguage(lang);
@@ -36,7 +36,7 @@ export default function LanguageSwitcher() {
           className="w-full justify-start text-white hover:bg-gray-900 rounded-full text-xl"
         >
           <Globe className="mr-2 h-4 w-4 " />
-          Language
+          {t("language")}
         </Button>
       </DropdownMenuTrigger>
 

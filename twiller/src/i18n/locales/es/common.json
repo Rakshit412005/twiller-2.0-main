@@ -27,7 +27,19 @@
   "whats_happening": "¿Qué está pasando?",
   "subscribe_description": "Suscríbete para desbloquear nuevas funciones y, si eres elegible, recibir una parte de los ingresos.",
   
-  "show_more": "Mostrar más"
+  "show_more": "Mostrar más",
+  
+  "follow": "Seguir",
+  "terms_of_service": "Términos del servicio",
+  "privacy_policy": "Política de privacidad",
+  "cookie_policy": "Política de cookies",
+  "accessibility": "Accesibilidad",
+  "ads_info": "Información de anuncios",
+  "copyright": "© 2024 X Corp.",
+  "you_might_like":"Esto te podría gustar.",
+  "language":"Idioma"
+
+
 
 
  

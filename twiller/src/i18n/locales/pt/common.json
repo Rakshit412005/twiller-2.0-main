@@ -26,5 +26,17 @@
   "whats_happening": "O que está acontecendo?",
   "subscribe_description": "Assine para desbloquear novos recursos e, se elegível, receber uma parte da receita.",
   
-  "show_more": "Mostrar mais"
+  "show_more": "Mostrar mais",
+  
+  "follow": "Seguir",
+  "terms_of_service": "Termos de serviço",
+  "privacy_policy": "Política de privacidade",
+  "cookie_policy": "Política de cookies",
+  "accessibility": "Acessibilidade",
+  "ads_info": "Informações sobre anúncios",
+  "copyright": "© 2024 X Corp.",
+  "you_might_like":"Pode gostar disto",
+  "language":"Idioma"
+
+
 }

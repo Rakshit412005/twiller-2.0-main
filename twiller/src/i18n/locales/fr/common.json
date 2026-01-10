@@ -25,7 +25,19 @@
   "whats_happening": "Que se passe-t-il ?",
   "subscribe_description": "Abonnez-vous pour débloquer de nouvelles fonctionnalités et, si éligible, recevoir une part des revenus.",
   
-  "show_more": "Afficher plus"
+  "show_more": "Afficher plus",
+  
+  "follow": "Suivre",
+  "terms_of_service": "Conditions d’utilisation",
+  "privacy_policy": "Politique de confidentialité",
+  "cookie_policy": "Politique relative aux cookies",
+  "accessibility": "Accessibilité",
+  "ads_info": "Infos publicitaires",
+  "copyright": "© 2024 X Corp.",
+  "you_might_like":"Vous pourriez aimer ceci.",
+  "language":"Langue"
+
+
 
 
 }

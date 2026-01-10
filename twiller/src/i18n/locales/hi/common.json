@@ -24,5 +24,17 @@
   "whats_happening": "क्या हो रहा है?",
   "subscribe_description": "नई सुविधाओं को अनलॉक करने के लिए सब्सक्राइब करें और यदि पात्र हों तो राजस्व का हिस्सा प्राप्त करें।",
   
-  "show_more": "और दिखाएं"
+  "show_more": "और दिखाएं",
+  
+  "follow": "फ़ॉलो करें",
+  "terms_of_service": "सेवा की शर्तें",
+  "privacy_policy": "गोपनीयता नीति",
+  "cookie_policy": "कुकी नीति",
+  "accessibility": "सुलभता",
+  "ads_info": "विज्ञापन जानकारी",
+  "copyright": "© 2024 X कॉर्प",
+  "you_might_like":"आपको यह पसंद आ सकता है",
+  "language":"भाषा"
+
+
 }

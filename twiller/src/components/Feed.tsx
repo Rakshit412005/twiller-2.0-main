@@ -162,7 +162,7 @@ const Feed = () => {
               value="following"
               className="data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-1 data-[state=active]:border-blue-100 data-[state=active]:rounded-none text-gray-400 hover:bg-gray-900/50 py-4 font-semibold"
             >
-              Following
+             {t("following")}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -196,7 +196,7 @@ const Feed = () => {
         : "bg-blue-500 hover:bg-blue-600"
     } text-white font-semibold rounded-full px-4 py-2`}
   >
-    {notificationsEnabled ? "Disable Notifications" : "Enable Notifications"}
+    {notificationsEnabled ? "Disable Notifications" : `${t("enable_notifications")}`}
   </button>
 </div>
 

@@ -91,7 +91,7 @@ export default function RightSidebar() {
       {/* Who to follow */}
       <Card className="bg-gray-900 border-gray-800">
         <CardContent className="p-4">
-          <h3 className="text-white text-xl font-bold mb-4">You might like</h3>
+          <h3 className="text-white text-xl font-bold mb-4">{t("you_might_like")}</h3>
           <div className="space-y-4">
             {suggestions.map((user) => (
               <div key={user.id} className="flex items-center justify-between">
@@ -125,7 +125,7 @@ export default function RightSidebar() {
                   variant="outline"
                   className="bg-white text-black hover:bg-gray-200 font-semibold rounded-full px-4"
                 >
-                  Follow
+                  {t("follow")}
                 </Button>
               </div>
             ))}
@@ -134,7 +134,7 @@ export default function RightSidebar() {
             variant="ghost"
             className="text-blue-400 hover:text-blue-300 p-0 mt-4"
           >
-            Show more
+            {t("show_more")}
           </Button>
         </CardContent>
       </Card>
@@ -143,22 +143,22 @@ export default function RightSidebar() {
       <div className="p-4 text-xs text-gray-500 space-y-2">
         <div className="flex flex-wrap gap-x-3 gap-y-1">
           <a href="#" className="hover:underline">
-            Terms of Service
+            {t("terms_of_service")}
           </a>
           <a href="#" className="hover:underline">
-            Privacy Policy
+            {t("privacy_policy")}
           </a>
           <a href="#" className="hover:underline">
-            Cookie Policy
+            {t("cookie_policy")}
           </a>
           <a href="#" className="hover:underline">
-            Accessibility
+            {t("accessibility")}
           </a>
           <a href="#" className="hover:underline">
-            Ads info
+            {t("ads_info")}
           </a>
         </div>
-        <div>© 2024 X Corp.</div>
+        <div>{t("copyright")}</div>
       </div>
     </div>
   );
