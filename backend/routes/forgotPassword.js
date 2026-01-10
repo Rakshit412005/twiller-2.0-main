@@ -11,7 +11,7 @@ router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).lean();
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -30,10 +30,10 @@ router.post("/forgot-password", async (req, res) => {
       }
     }
 
-    // ✅ NO save(), NO validation
+    // ✅ SAFE UPDATE (no validation)
     await User.updateOne(
-      { _id: user._id },
-      { "forgotPassword.lastRequestedAt": now }
+      { email },
+      { $set: { "forgotPassword.lastRequestedAt": now } }
     );
 
     res.status(200).json({ success: true });
@@ -41,6 +41,7 @@ router.post("/forgot-password", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 export default router;
