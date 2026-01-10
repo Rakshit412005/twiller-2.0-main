@@ -11,6 +11,15 @@ const UserSchema = new mongoose.Schema({
     default: true,
   },
 
+  languageVerification: {
+    otp: String,
+    expiresAt: Date,
+    pendingLanguage: String,
+  },
+  phone: {
+    type: String,
+  },
+
   // Password only for email users
   password: {
     type: String,

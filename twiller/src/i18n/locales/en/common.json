@@ -6,5 +6,19 @@
   "login": "Login",
   "logout": "Logout",
   "loading": "Loading...",
-  "premium_active": "Premium Active"
+  "premium_active": "Premium Active",
+
+  
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "bookmarks": "Bookmarks",
+    "profile": "Profile",
+    "more": "More"
+  }
+
+
 }
+

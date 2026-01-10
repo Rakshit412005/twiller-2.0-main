@@ -10,7 +10,7 @@ const PLAN_LIMITS = {
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-
+import languageOtpRoutes from "./routes/languageOtp.js";
 import forgotPasswordRoutes from "./routes/forgotPassword.js";
 import User from "./models/user.js";
 import Tweet from "./models/tweet.js";
@@ -26,6 +26,7 @@ app.use("/api/audio", audioOtpRoutes);
 app.use("/api/audio", audioUploadRoutes);
 app.use("/api/auth", forgotPasswordRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/language", languageOtpRoutes);
 app.get("/", (req, res) => {
   res.send("Twiller backend is running successfully");
 });
