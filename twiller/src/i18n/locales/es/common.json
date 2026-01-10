@@ -37,7 +37,16 @@
   "ads_info": "Información de anuncios",
   "copyright": "© 2024 X Corp.",
   "you_might_like":"Esto te podría gustar.",
-  "language":"Idioma"
+  "language":"Idioma",
+  "plan": {
+    "free": "Gratis (1 tweet/día)",
+    "bronze": "Bronce (3 tweets/mes)",
+    "silver": "Plata (5 tweets/mes)",
+    "gold": "Oro (Tweets ilimitados)"
+  },
+  "settings": "Configuración",
+  "premium":"Premium activo",
+  "disable_notifications":"desactivar notificaciones"
 
 
 

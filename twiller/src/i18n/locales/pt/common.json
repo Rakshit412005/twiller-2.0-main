@@ -6,7 +6,7 @@
   "login": "Entrar",
   "logout": "Sair",
   "loading": "Carregando...",
-   "post": "Publicar",
+  "post": "Publicar",
 
   "nav": {
     "home": "Início",
@@ -25,9 +25,9 @@
   "following": "Seguindo",
   "whats_happening": "O que está acontecendo?",
   "subscribe_description": "Assine para desbloquear novos recursos e, se elegível, receber uma parte da receita.",
-  
+
   "show_more": "Mostrar mais",
-  
+
   "follow": "Seguir",
   "terms_of_service": "Termos de serviço",
   "privacy_policy": "Política de privacidade",
@@ -35,8 +35,16 @@
   "accessibility": "Acessibilidade",
   "ads_info": "Informações sobre anúncios",
   "copyright": "© 2024 X Corp.",
-  "you_might_like":"Pode gostar disto",
-  "language":"Idioma"
+  "you_might_like": "Pode gostar disto",
+  "language": "Idioma",
 
-
+  "plan": {
+    "free": "Grátis (1 tweet/dia)",
+    "bronze": "Bronze (3 tweets/mês)",
+    "silver": "Prata (5 tweets/mês)",
+    "gold": "Ouro (Tweets ilimitados)"
+  },
+  "settings": "Configurações",
+  "premium": "ativo premium",
+  "disable_notifications":"desativar notificações"
 }

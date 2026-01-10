@@ -196,7 +196,7 @@ const Feed = () => {
         : "bg-blue-500 hover:bg-blue-600"
     } text-white font-semibold rounded-full px-4 py-2`}
   >
-    {notificationsEnabled ? "Disable Notifications" : `${t("enable_notifications")}`}
+    {notificationsEnabled ? `${t("disable_notifications")}` : `${t("enable_notifications")}`}
   </button>
 </div>
 

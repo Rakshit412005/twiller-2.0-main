@@ -120,7 +120,7 @@ export default function Sidebar({ currentPage = 'home', onNavigate }: SidebarPro
       <DropdownMenuContent className="w-56 bg-black border-gray-800">
         <DropdownMenuItem className="text-white hover:bg-gray-900">
           <Settings className="mr-2 h-4 w-4" />
-          Settings
+          {t("settings")}
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-gray-800" />
         <DropdownMenuItem
@@ -128,7 +128,7 @@ export default function Sidebar({ currentPage = 'home', onNavigate }: SidebarPro
           onClick={logout}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Log out @{user.username}
+          {t("logout")} @{user.username}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

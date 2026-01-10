@@ -74,14 +74,14 @@ export default function RightSidebar() {
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full"
             onClick={() => router.push("/subscribe")}
           >
-           {t(user?.plan === "gold" ? "Premium Active" : "Subscribe")} 
+           {t(user?.plan === "gold" ? `${t("premium")}` : `${t("subscribe")}`)} 
             
           </Button>
           {user && (
             <p className="mt-3 text-sm text-gray-400">
               {t("current_plan")}:{" "}
               <span className="text-white font-semibold">
-                {PLAN_INFO[user.plan]}
+                {t(`plan.${user.plan}`)}
               </span>
             </p>
           )}

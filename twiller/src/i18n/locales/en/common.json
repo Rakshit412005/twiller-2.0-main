@@ -38,7 +38,16 @@
   "whats_happening": "What's happening?",
   "subscribe_description": "Subscribe to unlock new features and if eligible, receive a share of revenue.",
   
-  "show_more": "Show more"
+  "show_more": "Show more",
+  "plan": {
+    "free": "Free (1 tweet/day)",
+    "bronze": "Bronze (3 tweets/month)",
+    "silver": "Silver (5 tweets/month)",
+    "gold": "Gold (Unlimited tweets)"
+  },
+  "settings": "Settings",
+  "premium":"Premium Active",
+  "disable_notifications":"Disable Notifications"
 
 
 }

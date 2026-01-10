@@ -36,7 +36,16 @@
   "ads_info": "广告信息",
   "copyright": "© 2024 X 公司",
   "you_might_like":"你可能会喜欢这个。",
-  "language":"语言"
+  "language":"语言",
+  "plan": {
+    "free": "免费（每天 1 条推文）",
+    "bronze": "青铜（每月 3 条推文）",
+    "silver": "白银（每月 5 条推文）",
+    "gold": "黄金（无限推文）"
+  },
+  "settings": "设置",
+  "premium":"高级活跃",
+  "disable_notifications":"禁用通知"
 
 
 }
