@@ -1,79 +1,115 @@
 import express from "express";
-import crypto from "crypto";
 import User from "../models/user.js";
-import { sendInvoiceMail } from "../utils/sendInvoiceMail.js"; // reuse email infra
+import { sendEmailOtp } from "../utils/sendOtpMail.js";
+import { sendSmsOtp } from "../utils/sendSmsOtp.js";
 
 const router = express.Router();
 
-// Generate OTP
 const generateOtp = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
 
 /**
- * REQUEST OTP
+ * SEND OTP
  */
-router.post("/request", async (req, res) => {
-  const { email, language } = req.body;
+router.post("/send", async (req, res) => {
+  console.log("LANG OTP SEND BODY:", req.body);
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ error: "User not found" });
+  try {
+    const { userId, language, target } = req.body;
 
-  const otp = generateOtp();
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+    if (!language) {
+      return res.status(400).json({ error: "Language missing" });
+    }
 
-  user.languageVerification = {
-    otp,
-    expiresAt,
-    pendingLanguage: language,
-  };
+    // ✅ FETCH USER FIRST
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-  await user.save();
+    // ✅ PREVENT OTP OVERWRITE
+    if (
+      user.languageVerification &&
+      user.languageVerification.expiresAt &&
+      new Date() < user.languageVerification.expiresAt
+    ) {
+      return res.status(429).json({
+        error: "OTP already sent. Please wait before requesting again.",
+      });
+    }
 
-  // 🇫🇷 EMAIL OTP
-  if (language === "fr") {
-    await sendInvoiceMail({
-      email: user.email,
-      username: user.username,
-      plan: "Language Verification",
-      amount: "OTP",
-      paymentId: otp,
-      orderId: "LANG",
-      expiryDate: expiresAt,
-    });
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          languageVerification: {
+            otp,
+            expiresAt,
+            pendingLanguage: language,
+            target,
+          },
+        },
+      }
+    );
+
+    // 🇫🇷 EMAIL
+    if (language === "fr") {
+      await sendEmailOtp(user.email, otp);
+    } 
+    // 📱 SMS
+    else {
+      if (!target) {
+        return res.status(400).json({ error: "Phone required" });
+      }
+      await sendSmsOtp(target, otp);
+    }
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error("LANG OTP SEND ERROR:", err);
+    return res.status(500).json({ error: "Failed to send OTP" });
   }
-
-  // 📱 SMS OTP (placeholder — Twilio next step)
-  else {
-    console.log("📱 SMS OTP:", otp);
-  }
-
-  res.json({ success: true });
 });
+
 
 /**
  * VERIFY OTP
  */
 router.post("/verify", async (req, res) => {
-  const { email, otp } = req.body;
+  try {
+    const { userId, otp } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user || !user.languageVerification)
-    return res.status(400).json({ error: "Invalid request" });
+    const user = await User.findById(userId);
+    if (!user || !user.languageVerification)
+      return res.status(400).json({ error: "Invalid request" });
 
-  const record = user.languageVerification;
+    const record = user.languageVerification;
 
-  if (new Date() > record.expiresAt)
-    return res.status(400).json({ error: "OTP expired" });
+    if (new Date() > record.expiresAt)
+      return res.status(400).json({ error: "OTP expired" });
 
-  if (record.otp !== otp)
-    return res.status(400).json({ error: "Invalid OTP" });
+    if (record.otp !== otp.trim())
+      return res.status(400).json({ error: "Invalid OTP" });
 
-  const language = record.pendingLanguage;
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: { language: record.pendingLanguage },
+        $unset: { languageVerification: "" },
+      }
+    );
 
-  user.languageVerification = undefined;
-  await user.save();
-
-  res.json({ success: true, language });
+    return res.json({
+      success: true,
+      language: record.pendingLanguage,
+    });
+  } catch (err) {
+    console.error("LANG OTP VERIFY ERROR:", err);
+    res.status(500).json({ error: "Verification failed" });
+  }
 });
 
 export default router;

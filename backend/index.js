@@ -26,7 +26,7 @@ app.use("/api/audio", audioOtpRoutes);
 app.use("/api/audio", audioUploadRoutes);
 app.use("/api/auth", forgotPasswordRoutes);
 app.use("/api/payment", paymentRoutes);
-app.use("/api/language", languageOtpRoutes);
+app.use("/api/language-otp", languageOtpRoutes);
 app.get("/", (req, res) => {
   res.send("Twiller backend is running successfully");
 });

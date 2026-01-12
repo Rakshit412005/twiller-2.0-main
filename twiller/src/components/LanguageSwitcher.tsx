@@ -1,60 +1,152 @@
 "use client";
 
-import { Globe } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import axios from "@/lib/axiosInstance";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
-const languages = [
-  { code: "en", label: "English" },
-  { code: "fr", label: "French" },
-  { code: "hi", label: "Hindi" },
-  { code: "es", label: "Spanish" },
-  { code: "pt", label: "Portuguese" },
-  { code: "zh", label: "Chinese" },
+const LANGUAGES = [
+  { code: "en", label: "English", type: "sms" },
+  { code: "fr", label: "Français", type: "email" },
+  { code: "hi", label: "हिंदी", type: "sms" },
+  { code: "es", label: "Español", type: "sms" },
+  { code: "pt", label: "Português", type: "sms" },
+  { code: "zh", label: "中文", type: "sms" },
 ];
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
-  const { t } = useTranslation();
-  const handleChange = async (lang: string) => {
-    // OTP logic will go here later
-    await i18n.changeLanguage(lang);
+  const { user } = useAuth();
+
+  const [selectedLang, setSelectedLang] = useState<any>(null);
+  const [mobile, setMobile] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState<"idle" | "mobile" | "otp">("idle");
+
+const sendOtp = async () => {
+  if (!selectedLang) return;
+
+  try {
+    let targetValue = "";
+
+    if (selectedLang.code === "fr") {
+      targetValue = user?.email!;
+    } else {
+      if (!mobile) {
+        toast.error("Enter mobile number");
+        return;
+      }
+      let phone = mobile.trim();
+      if (!phone.startsWith("+")) {
+        phone = "+91" + phone;
+      }
+      targetValue = phone;
+    }
+
+    await axios.post("/api/language-otp/send", {
+      userId: user?._id,
+      language: selectedLang.code, // 🔥 THIS WAS THE CORE BUG
+      target: targetValue,
+    });
+
+    toast.success("OTP sent");
+    setStep("otp");
+  } catch (err: any) {
+    toast.error(err.response?.data?.error || "Failed to send OTP");
+  }
+};
+
+
+
+  const verifyOtp = async () => {
+    try {
+      await axios.post("/api/language-otp/verify", {
+        userId: user?._id,
+        otp,
+      });
+
+      i18n.changeLanguage(selectedLang.code);
+      localStorage.setItem("lang", selectedLang.code);
+
+      toast.success("Language changed");
+      setStep("idle");
+      setOtp("");
+      setMobile("");
+    } catch (err: any) {
+      toast.error("Invalid or expired OTP");
+    }
   };
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-white hover:bg-gray-900 rounded-full text-xl"
-        >
-          <Globe className="mr-2 h-4 w-4 " />
-          {t("language")}
-        </Button>
-      </DropdownMenuTrigger>
+const handleLanguageClick = (lang: any) => {
+  setSelectedLang(lang);
+  setOtp("");
+  setMobile("");
 
-      <DropdownMenuContent
-        side="bottom"
-        align="start"
-        className="bg-black border border-gray-800"
-      >
-        {languages.map((lang) => (
-          <DropdownMenuItem
-            key={lang.code}
-            onClick={() => handleChange(lang.code)}
-            className="text-white hover:bg-gray-900"
+  if (lang.code === "fr") {
+    // email → show OTP input + send button
+    setStep("otp");
+  } else {
+    // sms → ask mobile first
+    setStep("mobile");
+  }
+};
+
+
+
+  return (
+    <div className="mt-4 space-y-2 text-sm text-gray-300">
+      {LANGUAGES.map((lang) => (
+        <button
+          key={lang.code}
+          onClick={() => handleLanguageClick(lang)}
+          className="block hover:text-white"
+        >
+          🌐 {lang.label}
+        </button>
+      ))}
+
+      {/* 📱 MOBILE INPUT */}
+      {step === "mobile" && (
+        <div className="mt-2">
+          <input
+            type="tel"
+            placeholder="Enter mobile number"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            className="w-full p-2 bg-gray-900 border border-gray-700 rounded"
+          />
+          <button
+            onClick={sendOtp}
+            className="mt-2 w-full bg-blue-500 py-1 rounded"
           >
-            {lang.label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            Send OTP
+          </button>
+        </div>
+      )}
+
+      {/* 🔐 OTP INPUT */}
+      {step === "otp" && (
+        <div className="mt-2 space-y-2">
+          <button onClick={sendOtp} className="w-full bg-blue-500 py-1 rounded">
+            Send OTP
+          </button>
+
+          <input
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            className="w-full p-2 bg-gray-900 border border-gray-700 rounded"
+          />
+
+          <button
+            onClick={verifyOtp}
+            className="w-full bg-green-500 py-1 rounded"
+          >
+            Verify OTP
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

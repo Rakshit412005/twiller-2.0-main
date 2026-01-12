@@ -5,26 +5,26 @@ const UserSchema = new mongoose.Schema({
   displayName: { type: String, required: true },
   avatar: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  // ADD THIS FIELD
+
   notificationsEnabled: {
     type: Boolean,
     default: true,
   },
 
-  languageVerification: {
-    otp: String,
-    expiresAt: Date,
-    pendingLanguage: String,
-  },
   phone: {
     type: String,
   },
 
-  // Password only for email users
+  language: {
+    type: String,
+    enum: ["en", "hi", "fr", "es", "pt", "zh"],
+    default: "en",
+  },
+
   password: {
     type: String,
     required: function () {
-      return this.authProvider === "email";
+    return this.isNew && this.authProvider === "email";
     },
   },
 
@@ -38,12 +38,10 @@ const UserSchema = new mongoose.Schema({
   location: { type: String, default: "" },
   website: { type: String, default: "" },
 
-  // Forgot password control
   forgotPassword: {
     lastRequestedAt: { type: Date },
   },
 
-  // 🔥 Subscription fields
   plan: {
     type: String,
     enum: ["free", "bronze", "silver", "gold"],
