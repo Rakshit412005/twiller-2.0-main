@@ -113,6 +113,7 @@ const tweets: Tweet[] = [
 ];
 const Feed = () => {
   const { t } = useTranslation();
+  console.log("Feed rendered");
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -219,6 +220,7 @@ const Feed = () => {
       </div>
     </div>
   );
+
 };
 
 export default Feed;

@@ -24,30 +24,31 @@ export default function LanguageSwitcher() {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"idle" | "mobile" | "otp">("idle");
 
-const sendOtp = async () => {
-  if (!selectedLang) return;
-
+const sendOtp = async (lang: any, phoneOverride?: string) => {
   try {
-    let targetValue = "";
+    let target = "";
 
-    if (selectedLang.code === "fr") {
-      targetValue = user?.email!;
+    if (lang.code === "fr") {
+      target = user!.email;
     } else {
-      if (!mobile) {
+      const phone = phoneOverride || mobile;
+      if (!phone) {
         toast.error("Enter mobile number");
         return;
       }
-      let phone = mobile.trim();
-      if (!phone.startsWith("+")) {
-        phone = "+91" + phone;
-      }
-      targetValue = phone;
+      target = phone.startsWith("+") ? phone : "+91" + phone;
     }
 
+    console.log("SEND OTP PAYLOAD", {
+      userId: user!._id,
+      language: lang.code,
+      target,
+    });
+
     await axios.post("/api/language-otp/send", {
-      userId: user?._id,
-      language: selectedLang.code, // 🔥 THIS WAS THE CORE BUG
-      target: targetValue,
+      userId: user!._id,
+      language: lang.code,
+      target,
     });
 
     toast.success("OTP sent");
@@ -59,38 +60,45 @@ const sendOtp = async () => {
 
 
 
-  const verifyOtp = async () => {
-    try {
-      await axios.post("/api/language-otp/verify", {
-        userId: user?._id,
-        otp,
-      });
 
-      i18n.changeLanguage(selectedLang.code);
-      localStorage.setItem("lang", selectedLang.code);
 
-      toast.success("Language changed");
-      setStep("idle");
-      setOtp("");
-      setMobile("");
-    } catch (err: any) {
-      toast.error("Invalid or expired OTP");
-    }
-  };
 
-const handleLanguageClick = (lang: any) => {
+const verifyOtp = async () => {
+  try {
+    await axios.post("/api/language-otp/verify", {
+      userId: user!._id,
+      otp,
+      language: selectedLang.code,
+    });
+
+    i18n.changeLanguage(selectedLang.code);
+    localStorage.setItem("lang", selectedLang.code);
+
+    toast.success("Language changed");
+    setStep("idle");
+    setOtp("");
+    setMobile("");
+  } catch (err: any) {
+    toast.error(err.response?.data?.error || "Invalid or expired OTP");
+  }
+};
+
+
+
+const handleLanguageClick = async (lang: any) => {
   setSelectedLang(lang);
   setOtp("");
   setMobile("");
 
   if (lang.code === "fr") {
-    // email → show OTP input + send button
-    setStep("otp");
+    await sendOtp(lang); // send ONCE
   } else {
-    // sms → ask mobile first
     setStep("mobile");
   }
 };
+
+
+
 
 
 
@@ -117,7 +125,7 @@ const handleLanguageClick = (lang: any) => {
             className="w-full p-2 bg-gray-900 border border-gray-700 rounded"
           />
           <button
-            onClick={sendOtp}
+            onClick={() => sendOtp(selectedLang, mobile)}
             className="mt-2 w-full bg-blue-500 py-1 rounded"
           >
             Send OTP
@@ -126,12 +134,9 @@ const handleLanguageClick = (lang: any) => {
       )}
 
       {/* 🔐 OTP INPUT */}
+      {/* 🔐 OTP INPUT */}
       {step === "otp" && (
         <div className="mt-2 space-y-2">
-          <button onClick={sendOtp} className="w-full bg-blue-500 py-1 rounded">
-            Send OTP
-          </button>
-
           <input
             placeholder="Enter OTP"
             value={otp}

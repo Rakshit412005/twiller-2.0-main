@@ -3,13 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 
-
-
-/* 🔔 Toastify */
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-/* ✅ ADD THIS */
 import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = Geist({
@@ -37,27 +33,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        
-
-        {/* ✅ AUTH PROVIDER MUST WRAP EVERYTHING */}
-        <AuthProvider>
-          {children}
-
-          {/* Toasts should be inside provider tree */}
-          <ToastContainer
-            position="bottom-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            pauseOnHover
-            theme="dark"
-          />
-        </AuthProvider>
-        <Providers>{children}</Providers>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Providers>
+          <AuthProvider>
+            {children}
+            <ToastContainer
+              position="bottom-right"
+              autoClose={5000}
+              theme="dark"
+            />
+          </AuthProvider>
+        </Providers>
       </body>
     </html>
   );

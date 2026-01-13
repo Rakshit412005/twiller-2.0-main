@@ -15,6 +15,14 @@ const UserSchema = new mongoose.Schema({
     type: String,
   },
 
+  languageVerification: {
+  otp: String,
+  expiresAt: Date,
+  pendingLanguage: String,
+  target: String,
+},
+
+
   language: {
     type: String,
     enum: ["en", "hi", "fr", "es", "pt", "zh"],

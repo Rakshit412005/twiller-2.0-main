@@ -38,6 +38,7 @@ interface SidebarProps {
 
 export default function Sidebar({ currentPage = 'home', onNavigate }: SidebarProps) {
   const { user, logout } = useAuth();
+  console.log("Sidebar rendered");
   const { t } = useTranslation();
   const navigation = [
     { name: 'Home', icon: Home, current: currentPage === 'home', page: 'home' },
@@ -51,6 +52,7 @@ export default function Sidebar({ currentPage = 'home', onNavigate }: SidebarPro
   ];
 
   return (
+    
     <div className="flex flex-col h-screen w-64 border-r border-gray-800 bg-black">
       <div className="p-4">
         <TwitterLogo size="lg" className="text-white" />
@@ -133,8 +135,10 @@ export default function Sidebar({ currentPage = 'home', onNavigate }: SidebarPro
       </DropdownMenuContent>
     </DropdownMenu>
   </div>
+  
 )}
 
     </div>
   );
+
 }

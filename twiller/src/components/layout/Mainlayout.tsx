@@ -1,4 +1,5 @@
 "use client";
+
 import { useAuth } from "@/context/AuthContext";
 import React, { useState } from "react";
 import LoadingSpinner from "../loading-spinner";
@@ -21,7 +22,6 @@ const Mainlayout = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // If user is not logged in → show children (like login/signup pages)
   if (!user) {
     return <>{children}</>;
   }
@@ -31,9 +31,11 @@ const Mainlayout = ({ children }: { children: React.ReactNode }) => {
       <div className="w-20 sm:w-24 md:w-64 border-r border-gray-800">
         <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
       </div>
+
       <main className="flex-1 max-w-2xl border-x border-gray-800">
-        {currentPage ==="profile" ? <ProfilePage/> :children}
+        {currentPage === "profile" ? <ProfilePage /> : children}
       </main>
+
       <div className="hidden lg:block w-80 p-4">
         <RightSidebar />
       </div>
