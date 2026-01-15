@@ -234,7 +234,7 @@ export default function ProfilePage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 bg-transparent border-b border-gray-800 rounded-none h-auto">
+        <TabsList className="grid w-full grid-cols-6 bg-transparent border-b border-gray-800 rounded-none h-auto">
           <TabsTrigger
             value="posts"
             className="data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:rounded-none text-gray-400 hover:bg-gray-900/50 py-4 font-semibold"
@@ -265,11 +265,17 @@ export default function ProfilePage() {
           >
             Media
           </TabsTrigger>
+          <TabsTrigger
+            value="security"
+            className="data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:rounded-none text-gray-400 hover:bg-gray-900/50 py-4 font-semibold"
+          >
+            Security
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="posts" className="mt-0">
           <div className="divide-y divide-gray-800">
-            { loading ? (
+            {loading ? (
               <Card className="bg-black border-none">
                 <CardContent className="py-12 text-center">
                   <div className="text-gray-400">
@@ -281,7 +287,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
             ) : (
-              userTweets.map((tweet:any) => (
+              userTweets.map((tweet: any) => (
                 <TweetCard key={tweet._id} tweet={tweet} />
               ))
             )}
@@ -338,6 +344,40 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+        <TabsContent value="security" className="mt-0">
+          <div className="divide-y divide-gray-800">
+            {user.loginHistory && user.loginHistory.length > 0 ? (
+              user.loginHistory.map((log: any, idx: number) => (
+                <div key={idx} className="p-4 text-sm text-gray-300">
+                  <p>
+                    <span className="font-semibold">Browser:</span>{" "}
+                    {log.browser}
+                  </p>
+                  <p>
+                    <span className="font-semibold">OS:</span> {log.os}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Device:</span>{" "}
+                    {log.deviceType}
+                  </p>
+                  <p>
+                    <span className="font-semibold">IP:</span> {log.ipAddress}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Time:</span>{" "}
+                    {new Date(log.loginAt).toLocaleString()}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <Card className="bg-black border-none">
+                <CardContent className="py-12 text-center text-gray-400">
+                  <p>No login history found.</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
       <Editprofile

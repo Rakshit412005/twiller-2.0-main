@@ -17,7 +17,7 @@ import Tweet from "./models/tweet.js";
 import audioOtpRoutes from "./routes/audioOtp.js";
 import audioUploadRoutes from "./routes/audioUpload.js";
 import paymentRoutes from "./routes/payment.js";
-
+import loginTrackRoutes from "./routes/loginTrack.js";
 
 const app = express();
 app.use(cors());
@@ -27,6 +27,7 @@ app.use("/api/audio", audioUploadRoutes);
 app.use("/api/auth", forgotPasswordRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/language-otp", languageOtpRoutes);
+app.use("/api", loginTrackRoutes);
 app.get("/", (req, res) => {
   res.send("Twiller backend is running successfully");
 });

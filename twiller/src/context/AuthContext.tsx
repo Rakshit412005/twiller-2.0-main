@@ -8,10 +8,13 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect,useRef } from "react";
 import { auth } from "./firebase";
 import axiosInstance from "../lib/axiosInstance";
 import { toast } from "react-toastify";
+import { getDeviceInfo } from "@/utils/deviceInfo";
+
+
 
 
 interface User {
@@ -21,6 +24,14 @@ interface User {
   avatar: string;
   bio?: string;
   joinedDate: string;
+  loginHistory?: {
+  browser: string;
+  os: string;
+  deviceType: "desktop" | "mobile";
+  ipAddress: string;
+  loginAt: string;
+}[];
+
   email: string;
   website: string;
   location: string;
@@ -66,8 +77,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+const trackLogin = async (userId: string, email: string) => {
+  try {
+    const device = getDeviceInfo();
+
+    // 1️⃣ Track login
+    await axiosInstance.post("/api/track-login", {
+      userId,
+      browser: device.browser,
+      os: device.os,
+      deviceType: device.deviceType,
+    });
+
+    // 2️⃣ RE-FETCH USER (🔥 THIS WAS MISSING)
+    const res = await axiosInstance.get("/loggedinuser", {
+      params: { email },
+    });
+
+    if (res.data) {
+      const freshUser = {
+        ...res.data,
+        _id: res.data._id.toString(),
+      };
+
+      setUser(freshUser);
+      localStorage.setItem("twitter-user", JSON.stringify(freshUser));
+    }
+  } catch (err: any) {
+    const message =
+      err.response?.data?.error ||
+      err.response?.data?.message ||
+      "Login restricted due to security rules";
+
+    toast.error(message)
+
+    console.error("Login tracking failed:", message);
+  }
+
+};
+
+const hasTrackedLogin = useRef(false);
+
+
   useEffect(() => {
     // Check for existing session
+    
+
     const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser?.email) {
         try {
@@ -83,6 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
             setUser(freshUser);
             localStorage.setItem("twitter-user", JSON.stringify(freshUser));
+            
           }
         } catch (err) {
           console.log("Failed to fetch user:", err);
@@ -113,8 +169,19 @@ const login = async (email: string, password: string) => {
         _id: res.data._id.toString(),
       };
 
-      setUser(freshUser);
-      localStorage.setItem("twitter-user", JSON.stringify(freshUser));
+try {
+  await trackLogin(freshUser._id,freshUser.email);
+} catch {
+  await signOut(auth);
+  setUser(null);
+  localStorage.removeItem("twitter-user");
+  return;
+}
+
+setUser(freshUser);
+localStorage.setItem("twitter-user", JSON.stringify(freshUser));
+
+      await trackLogin(freshUser._id,freshUser.email);
     }
   } catch (error: any) {
     /**
@@ -180,6 +247,7 @@ const login = async (email: string, password: string) => {
   };
 
   const logout = async () => {
+    hasTrackedLogin.current = false;
     setUser(null);
     await signOut(auth);
     localStorage.removeItem("twitter-user");
@@ -250,7 +318,14 @@ if (res.data) {
 
       if (userData) {
         setUser(userData);
+        
         localStorage.setItem("twitter-user", JSON.stringify(userData));
+
+        if (!hasTrackedLogin.current) {
+          await trackLogin(userData._id,userData.email);
+          hasTrackedLogin.current = true;
+        }
+
       } else {
         throw new Error("Login/Register failed: No user data returned");
       }
