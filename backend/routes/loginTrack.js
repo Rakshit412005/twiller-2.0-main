@@ -32,6 +32,18 @@ router.post("/track-login", async (req, res) => {
       }
     }
 
+// 🔐 Chrome requires OTP (ONLY ONCE)
+if (browser === "Chrome") {
+  if (!user.loginOtpVerified) {
+    return res.status(401).json({ error: "OTP_REQUIRED" });
+  }
+
+  // ✅ OTP was verified → reset flag so next login requires OTP again
+  user.loginOtpVerified = false;
+  await user.save({ validateBeforeSave: false });
+}
+
+
 await User.updateOne(
   { _id: userId },
   {
@@ -62,3 +74,5 @@ await User.updateOne(
 });
 
 export default router;
+
+

@@ -46,6 +46,16 @@ const UserSchema = new mongoose.Schema({
   location: { type: String, default: "" },
   website: { type: String, default: "" },
 
+  loginOtp: {
+  otp: String,
+  expiresAt: Date,
+},
+loginOtpVerified: {
+  type: Boolean,
+  default: false,
+},
+
+
   forgotPassword: {
     lastRequestedAt: { type: Date },
   },
