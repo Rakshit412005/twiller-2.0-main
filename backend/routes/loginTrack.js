@@ -31,17 +31,16 @@ router.post("/track-login", async (req, res) => {
         });
       }
     }
+console.log("OTP VERIFIED FLAG:", user.loginOtpVerified);
 
 // 🔐 Chrome requires OTP (ONLY ONCE)
 if (browser === "Chrome") {
   if (!user.loginOtpVerified) {
     return res.status(401).json({ error: "OTP_REQUIRED" });
   }
-
-  // ✅ OTP was verified → reset flag so next login requires OTP again
-  user.loginOtpVerified = false;
-  await user.save({ validateBeforeSave: false });
+  // ✅ DO NOT reset here
 }
+
 
 
 await User.updateOne(
@@ -49,21 +48,21 @@ await User.updateOne(
   {
     $push: {
       loginHistory: {
-        $each: [
-          {
-            browser,
-            os,
-            deviceType,
-            ipAddress,
-            loginAt: new Date(),
-          },
-        ],
+        $each: [{
+          browser,
+          os,
+          deviceType,
+          ipAddress,
+          loginAt: new Date(),
+        }],
         $position: 0,
-        $slice: 20, // keep last 20 logins only
+        $slice: 20,
       },
     },
   }
 );
+
+
 
 
     res.json({ success: true });

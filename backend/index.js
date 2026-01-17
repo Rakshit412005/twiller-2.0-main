@@ -19,7 +19,7 @@ import audioUploadRoutes from "./routes/audioUpload.js";
 import paymentRoutes from "./routes/payment.js";
 import loginTrackRoutes from "./routes/loginTrack.js";
 import loginOtpRoutes from "./routes/loginOtp.js";
-
+import logoutRoutes from "./routes/logout.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -30,6 +30,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/language-otp", languageOtpRoutes);
 app.use("/api", loginTrackRoutes);
 app.use("/api/login-otp", loginOtpRoutes);
+app.use("/api", logoutRoutes);
 app.get("/", (req, res) => {
   res.send("Twiller backend is running successfully");
 });

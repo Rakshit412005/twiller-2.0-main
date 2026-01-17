@@ -55,6 +55,18 @@ loginOtpVerified: {
   default: false,
 },
 
+loginHistory: [
+  {
+    browser: String,
+    os: String,
+    deviceType: String, // desktop | mobile
+    ipAddress: String,
+    loginAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+],
 
   forgotPassword: {
     lastRequestedAt: { type: Date },
@@ -75,18 +87,7 @@ loginOtpVerified: {
     type: Date,
     default: null,
   },
-loginHistory: [
-  {
-    browser: String,
-    os: String,
-    deviceType: String, // desktop | mobile
-    ipAddress: String,
-    loginAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-],
+
 
   joinedDate: {
     type: Date,

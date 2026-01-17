@@ -120,28 +120,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (err: any) {
       const errorCode = err.response?.data?.error;
 
-if (errorCode === "OTP_REQUIRED") {
-  if (!otpRequestedRef.current) {
-    otpRequestedRef.current = true;
+      if (errorCode === "OTP_REQUIRED") {
+        if (!otpRequestedRef.current) {
+          otpRequestedRef.current = true;
 
-    await axiosInstance.post("/api/login-otp/send", { userId });
+          await axiosInstance.post("/api/login-otp/send", { userId });
 
-    const pending = { userId, email };
-    setPendingOtpUser(pending);
-    localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
+          const pending = { userId, email };
+          setPendingOtpUser(pending);
+          localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
 
-    toast.info("OTP sent to your email. Please verify.");
-  }
+          toast.info("OTP sent to your email. Please verify.");
+        }
 
-  // 🔥 VERY IMPORTANT
-  await signOut(auth);
-  setUser(null);
-  localStorage.removeItem("twitter-user");
-
-  return "OTP_REQUIRED";
-}
+        // 🔥 VERY IMPORTANT
 
 
+        return "OTP_REQUIRED";
+      }
 
       // ⏰ MOBILE TIME BLOCK
       if (errorCode) {
@@ -154,33 +150,42 @@ if (errorCode === "OTP_REQUIRED") {
     }
   };
 
-  const verifyLoginOtp = async (otp: string) => {
-    if (!pendingOtpUser) return;
+const verifyLoginOtp = async (otp: string) => {
+  if (!pendingOtpUser) return;
 
-    try {
-      await axiosInstance.post("/api/login-otp/verify", {
-        userId: pendingOtpUser.userId,
-        otp,
-      });
+  try {
+    // 1️⃣ Verify OTP
+    await axiosInstance.post("/api/login-otp/verify", {
+      userId: pendingOtpUser.userId,
+      otp,
+    });
 
-      // 🔐 RE-LOGIN after OTP
-      const res = await axiosInstance.get("/loggedinuser", {
-        params: { email: pendingOtpUser.email },
-      });
+    // 2️⃣ FINALIZE LOGIN (THIS WAS MISSING)
+    await axiosInstance.post("/api/track-login", {
+      userId: pendingOtpUser.userId,
+      ...getDeviceInfo(),
+    });
 
-      setUser(res.data);
-      localStorage.setItem("twitter-user", JSON.stringify(res.data));
+    // 3️⃣ Fetch FINAL user (now history exists)
+    const res = await axiosInstance.get("/loggedinuser", {
+      params: { email: pendingOtpUser.email },
+    });
 
-      
-      localStorage.removeItem("pendingLoginOtp");
-      otpRequestedRef.current = false;
-      setPendingOtpUser(null);
+    setUser(res.data);
+    localStorage.setItem("twitter-user", JSON.stringify(res.data));
 
-      toast.success("Login verified");
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || "Invalid OTP");
-    }
-  };
+    // 4️⃣ Cleanup
+    hasTrackedLogin.current = true;
+    otpRequestedRef.current = false;
+    localStorage.removeItem("pendingLoginOtp");
+    setPendingOtpUser(null);
+
+    toast.success("Login verified");
+  } catch (err: any) {
+    toast.error(err.response?.data?.error || "Invalid OTP");
+  }
+};
+
 
   const hasTrackedLogin = useRef(false);
   useEffect(() => {
@@ -193,10 +198,10 @@ if (errorCode === "OTP_REQUIRED") {
   useEffect(() => {
     // Check for existing session
 
-const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
+  const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
   if (!firebaseUser?.email) {
     setUser(null);
-    localStorage.removeItem("twitter-user");
+   // localStorage.removeItem("twitter-user");
     setIsLoading(false);
     return;
   }
@@ -209,26 +214,25 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
     setUser(res.data);
     localStorage.setItem("twitter-user", JSON.stringify(res.data));
   } catch (err: any) {
-  if (err.response?.data?.error === "OTP_REQUIRED") {
-    const pending = {
-      userId: err.response.data.userId,
-      email: firebaseUser.email,
-    };
+    if (err.response?.data?.error === "OTP_REQUIRED") {
+      const pending = {
+        userId: err.response.data.userId,
+        email: firebaseUser.email,
+      };
 
-    setPendingOtpUser(pending);
-    localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
-    toast.info("Please verify OTP to continue");
+      setPendingOtpUser(pending);
+      localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
+      toast.info("Please verify OTP to continue");
 
-    await signOut(auth);
-    setUser(null);
-    setIsLoading(false);
-    return;
+      // ✅ DO NOT sign out
+      // ✅ DO NOT clear twitter-user
+      setIsLoading(false);
+      return;
+    }
+
+    // ✅ Any other backend error → keep Firebase session
+    console.warn("loggedinuser failed:", err);
   }
-
-  await signOut(auth);
-  setUser(null);
-}
-
 
   setIsLoading(false);
 });
@@ -322,12 +326,23 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
     setIsLoading(false);
   };
 
-  const logout = async () => {
-    hasTrackedLogin.current = false;
-    setUser(null);
-    await signOut(auth);
-    localStorage.removeItem("twitter-user");
-  };
+ const logout = async () => {
+  try {
+    if (user?._id) {
+      await axiosInstance.post("/api/logout", {
+        userId: user._id,
+      });
+    }
+  } catch (err) {
+    console.warn("Backend logout failed", err);
+  }
+
+  hasTrackedLogin.current = false;
+  setUser(null);
+  await signOut(auth);
+  localStorage.removeItem("twitter-user");
+};
+
 
   const updateProfile = async (profileData: {
     displayName: string;
@@ -358,68 +373,67 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
     setIsLoading(false);
   };
   const googlesignin = async () => {
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const firebaseuser = result.user;
-
-    if (!firebaseuser?.email) {
-      throw new Error("No email found in Google account");
-    }
-
-    // 1️⃣ Find or create user in DB
-    let userData;
     try {
-      const res = await axiosInstance.get("/loggedinuser", {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const firebaseuser = result.user;
+
+      if (!firebaseuser?.email) {
+        throw new Error("No email found in Google account");
+      }
+
+      // 1️⃣ Find or create user in DB
+      let userData;
+      try {
+        const res = await axiosInstance.get("/loggedinuser", {
+          params: { email: firebaseuser.email },
+        });
+        userData = res.data;
+      } catch {
+        const newuser = {
+          username: firebaseuser.email.split("@")[0],
+          displayName: firebaseuser.displayName || "User",
+          avatar:
+            firebaseuser.photoURL ||
+            "https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg",
+          email: firebaseuser.email,
+        };
+
+        const registerRes = await axiosInstance.post("/register", newuser);
+        userData = registerRes.data;
+      }
+
+      if (!userData) {
+        throw new Error("User creation failed");
+      }
+
+      // 2️⃣ OTP / device / time gate happens HERE
+      const loginResult = await trackLogin(userData._id, userData.email);
+
+      if (loginResult === "OTP_REQUIRED") {
+        // 🔥 DO NOT set user
+        // 🔥 DO NOT call /loggedinuser
+        return;
+      }
+
+      // 3️⃣ OTP passed → NOW fetch fresh user
+      const freshRes = await axiosInstance.get("/loggedinuser", {
         params: { email: firebaseuser.email },
       });
-      userData = res.data;
-    } catch {
-      const newuser = {
-        username: firebaseuser.email.split("@")[0],
-        displayName: firebaseuser.displayName || "User",
-        avatar:
-          firebaseuser.photoURL ||
-          "https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg",
-        email: firebaseuser.email,
-      };
 
-      const registerRes = await axiosInstance.post("/register", newuser);
-      userData = registerRes.data;
+      setUser(freshRes.data);
+      localStorage.setItem("twitter-user", JSON.stringify(freshRes.data));
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+      toast.error(
+        error.response?.data?.message || error.message || "Login failed"
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    if (!userData) {
-      throw new Error("User creation failed");
-    }
-
-    // 2️⃣ OTP / device / time gate happens HERE
-    const loginResult = await trackLogin(userData._id, userData.email);
-
-    if (loginResult === "OTP_REQUIRED") {
-      // 🔥 DO NOT set user
-      // 🔥 DO NOT call /loggedinuser
-      return;
-    }
-
-    // 3️⃣ OTP passed → NOW fetch fresh user
-    const freshRes = await axiosInstance.get("/loggedinuser", {
-      params: { email: firebaseuser.email },
-    });
-
-    setUser(freshRes.data);
-    localStorage.setItem("twitter-user", JSON.stringify(freshRes.data));
-  } catch (error: any) {
-    console.error("Google Sign-In Error:", error);
-    toast.error(
-      error.response?.data?.message || error.message || "Login failed"
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   return (
     <AuthContext.Provider
