@@ -69,15 +69,35 @@ app.post("/register", async (req, res) => {
 app.get("/loggedinuser", async (req, res) => {
   try {
     const { email } = req.query;
+    const browser = req.headers["x-browser"]; // 👈 VERY IMPORTANT
+
     if (!email) {
-      return res.status(400).send({ error: "Email required" });
+      return res.status(400).json({ error: "Email required" });
     }
-    const user = await User.findOne({ email: email });
-    return res.status(200).send(user);
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // 🔐 BLOCK CHROME USERS WITHOUT OTP (EVEN AFTER REFRESH)
+    if (
+      browser === "Chrome" &&
+      user.loginOtp &&
+      user.loginOtpVerified !== true
+    ) {
+      return res.status(401).json({
+        error: "OTP_REQUIRED",
+        userId: user._id,
+      });
+    }
+
+    return res.status(200).json(user);
   } catch (error) {
-    return res.status(400).send({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
+
 // update Profile
 app.patch("/userupdate/:email", async (req, res) => {
   try {

@@ -44,6 +44,11 @@ interface User {
 }
 
 interface AuthContextType {
+  pendingOtpUser: {
+    userId: string;
+    email: string;
+  } | null;
+
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (
@@ -116,14 +121,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // 🔐 CHROME → SEND EMAIL OTP
       if (errorCode === "OTP_REQUIRED") {
-        await axiosInstance.post("/api/login-otp/send", {
-          userId,
-        });
-
+        await axiosInstance.post("/api/login-otp/send", { userId });
         setPendingOtpUser({ userId, email });
         toast.info("OTP sent to your email");
 
-        throw new Error("OTP_REQUIRED");
+        return "OTP_REQUIRED"; // ✅ controlled return
       }
 
       // ⏰ MOBILE TIME BLOCK
@@ -148,7 +150,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Retry login tracking AFTER OTP success
       await trackLogin(pendingOtpUser.userId, pendingOtpUser.email);
-
+      localStorage.removeItem("pendingLoginOtp");
       setPendingOtpUser(null);
       toast.success("Login verified");
     } catch (err: any) {
@@ -157,6 +159,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const hasTrackedLogin = useRef(false);
+  useEffect(() => {
+    const pending = localStorage.getItem("pendingLoginOtp");
+    if (pending) {
+      setPendingOtpUser(JSON.parse(pending));
+    }
+  }, []);
 
   useEffect(() => {
     // Check for existing session
@@ -208,19 +216,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       };
 
       // 🔐 Track login ONCE
-      try {
-        await trackLogin(freshUser._id, freshUser.email);
-        setUser(freshUser);
-        localStorage.setItem("twitter-user", JSON.stringify(freshUser));
-      } catch (err: any) {
-        if (err.message === "OTP_REQUIRED") {
-          // ⛔ STOP LOGIN FLOW — wait for OTP
-          return;
-        }
+      const result = await trackLogin(freshUser._id, freshUser.email);
 
-        throw err;
+      if (result === "OTP_REQUIRED") {
+        return; // ⛔ stop login until OTP verified
       }
 
+      setUser(freshUser);
       localStorage.setItem("twitter-user", JSON.stringify(freshUser));
     } catch (error: any) {
       if (error.code === "auth/invalid-credential") {
@@ -357,8 +359,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         if (!hasTrackedLogin.current) {
           const device = getDeviceInfo();
 
-          if (device.browser !== "Chrome") {
-            await trackLogin(userData._id, userData.email);
+          const result = await trackLogin(userData._id, userData.email);
+
+          if (result === "OTP_REQUIRED") {
+            return; // ⛔ wait for OTP
           }
         }
       } else {
@@ -384,6 +388,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         isLoading,
         googlesignin,
+        pendingOtpUser,
       }}
     >
       {children}
@@ -394,7 +399,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             <h2 className="text-white font-semibold mb-2">Verify Login</h2>
 
             <input
-              className="w-full p-2 bg-black border border-gray-700 rounded mb-3"
+              className="w-full p-2 bg-black border border-gray-700 rounded mb-3 text-white"
               placeholder="Enter 6-digit OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}

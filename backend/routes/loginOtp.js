@@ -1,6 +1,6 @@
 import express from "express";
 import User from "../models/user.js";
-import { sendEmailOtp } from "../utils/sendOtpMail.js";
+import { sendLoginOtpMail } from "../utils/sendLoginOtpMail.js";
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ router.post("/send", async (req, res) => {
 
     await user.save({ validateBeforeSave: false });
 
-    await sendEmailOtp(user.email, otp);
+    await sendLoginOtpMail(user.email, otp);
 
     res.json({ success: true });
   } catch (err) {
@@ -61,6 +61,7 @@ router.post("/verify", async (req, res) => {
     }
 
     user.loginOtp = undefined;
+    user.loginOtpVerified = true;
     await user.save({ validateBeforeSave: false });
 
     res.json({ success: true });

@@ -8,7 +8,7 @@ import RightSidebar from "./Rightsidebar";
 import ProfilePage from "../ProfilePage";
 
 const Mainlayout = ({ children }: { children: React.ReactNode }) => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading,pendingOtpUser } = useAuth();
   const [currentPage, setCurrentPage] = useState("home");
 
   if (isLoading) {
@@ -21,6 +21,16 @@ const Mainlayout = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
+
+  // 🔐 BLOCK APP IF OTP IS PENDING
+if (pendingOtpUser) {
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      {/* OTP modal is already rendered by AuthContext */}
+    </div>
+  );
+}
+
 
   if (!user) {
     return <>{children}</>;
