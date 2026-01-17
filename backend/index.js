@@ -81,16 +81,7 @@ app.get("/loggedinuser", async (req, res) => {
     }
 
     // 🔐 BLOCK CHROME USERS WITHOUT OTP (EVEN AFTER REFRESH)
-    if (
-      browser === "Chrome" &&
-      user.loginOtp &&
-      user.loginOtpVerified !== true
-    ) {
-      return res.status(401).json({
-        error: "OTP_REQUIRED",
-        userId: user._id,
-      });
-    }
+  
 
     return res.status(200).json(user);
   } catch (error) {
