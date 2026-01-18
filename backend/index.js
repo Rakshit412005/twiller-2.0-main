@@ -34,6 +34,10 @@ app.use("/api", logoutRoutes);
 app.get("/", (req, res) => {
   res.send("Twiller backend is running successfully");
 });
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
+});
+
 
 
 const port = process.env.PORT || 5000;
