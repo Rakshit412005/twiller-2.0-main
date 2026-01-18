@@ -12,6 +12,7 @@ const plans = [
   { key: "silver", name: "Silver", price: 300, tweets: 5 },
   { key: "gold", name: "Gold", price: 1000, tweets: "Unlimited" },
 ];
+export const dynamic = "force-dynamic";
 
 export default function SubscribePage() {
   const { user } = useAuth();
