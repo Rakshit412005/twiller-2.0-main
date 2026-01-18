@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
-// keep your credentials 
+
 const firebaseConfig = {
   apiKey: "AIzaSyCXwgUw1UYW_dvJiQTOqgeKBy4LefD5xXc",
   authDomain: "twiller-auth.firebaseapp.com",

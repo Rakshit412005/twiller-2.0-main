@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// 🔥 ADD THIS
+
 axiosInstance.interceptors.request.use((config) => {
   const ua = navigator.userAgent;
 

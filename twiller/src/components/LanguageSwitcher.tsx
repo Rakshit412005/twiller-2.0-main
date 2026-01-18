@@ -91,7 +91,7 @@ const handleLanguageClick = async (lang: any) => {
   setMobile("");
 
   if (lang.code === "fr") {
-    await sendOtp(lang); // send ONCE
+    await sendOtp(lang); 
   } else {
     setStep("mobile");
   }

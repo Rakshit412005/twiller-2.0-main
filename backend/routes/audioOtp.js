@@ -3,7 +3,7 @@ import { sendOtpEmail } from "../utils/sendOtp.js";
 
 const router = express.Router();
 
-// in-memory store (OK for internship project)
+
 const otpStore = new Map();
 
 router.post("/send-otp", async (req, res) => {
@@ -14,7 +14,7 @@ router.post("/send-otp", async (req, res) => {
 
   otpStore.set(email, {
     otp,
-    expiresAt: Date.now() + 5 * 60 * 1000, // 5 mins
+    expiresAt: Date.now() + 5 * 60 * 1000, 
   });
 
   await sendOtpEmail(email, otp);

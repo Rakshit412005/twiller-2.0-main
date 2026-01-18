@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // ✅ Prevent double render in dev
+  
   useEffect(() => {
     setMounted(true);
   }, []);

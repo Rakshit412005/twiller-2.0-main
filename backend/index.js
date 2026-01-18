@@ -52,7 +52,6 @@ mongoose
     console.error("❌ MongoDB connection error:", err.message);
   });
 
-//Register
 app.post("/register", async (req, res) => {
   try {
     const existinguser = await User.findOne({ email: req.body.email });
@@ -66,11 +65,11 @@ app.post("/register", async (req, res) => {
     return res.status(400).send({ error: error.message });
   }
 });
-// loggedinuser
+
 app.get("/loggedinuser", async (req, res) => {
   try {
     const { email } = req.query;
-    const browser = req.headers["x-browser"]; // 👈 VERY IMPORTANT
+    const browser = req.headers["x-browser"]; 
 
     if (!email) {
       return res.status(400).json({ error: "Email required" });
@@ -81,7 +80,7 @@ app.get("/loggedinuser", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // 🔐 BLOCK CHROME USERS WITHOUT OTP (EVEN AFTER REFRESH)
+  
   
 
     return res.status(200).json(user);
@@ -90,7 +89,7 @@ app.get("/loggedinuser", async (req, res) => {
   }
 });
 
-// update Profile
+
 app.patch("/userupdate/:email", async (req, res) => {
   try {
     const { email } = req.params;
@@ -104,9 +103,7 @@ app.patch("/userupdate/:email", async (req, res) => {
     return res.status(400).send({ error: error.message });
   }
 });
-// Tweet API
 
-// POST
 app.post("/post", async (req, res) => {
   try {
     const { author } = req.body;
@@ -120,7 +117,7 @@ app.post("/post", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // ⏰ Expire plan
+    
     if (
       user.plan !== "free" &&
       user.planExpiresAt &&
@@ -136,7 +133,7 @@ app.post("/post", async (req, res) => {
       );
     }
 
-    // 🔢 Allowed tweets
+    
     let allowedTweets = 1;
     if (user.plan === "bronze") allowedTweets = 3;
     if (user.plan === "silver") allowedTweets = 5;
@@ -148,11 +145,11 @@ app.post("/post", async (req, res) => {
       });
     }
 
-    // ✅ Create tweet
+    
     const tweet = new Tweet(req.body);
     await tweet.save();
 
-    // 🔼 Increment tweets safely (NO validation)
+  
     await User.updateOne(
       { _id: user._id },
       { $inc: { tweetsUsed: 1 } }
@@ -167,7 +164,7 @@ app.post("/post", async (req, res) => {
 
 
 
-// get all tweet
+
 app.get("/post", async (req, res) => {
   try {
     const tweet = await Tweet.find().sort({ timestamp: -1 }).populate("author");
@@ -176,7 +173,6 @@ app.get("/post", async (req, res) => {
     return res.status(400).send({ error: error.message });
   }
 });
-//  LIKE TWEET
 
 
 app.post("/like/:tweetid", async (req, res) => {
@@ -213,7 +209,7 @@ app.post("/like/:tweetid", async (req, res) => {
 
 
 
-// retweet 
+
 
 
 

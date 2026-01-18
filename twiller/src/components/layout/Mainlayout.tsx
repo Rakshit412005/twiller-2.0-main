@@ -22,11 +22,11 @@ const Mainlayout = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // 🔐 BLOCK APP IF OTP IS PENDING
+  
 if (pendingOtpUser) {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">
-      {/* OTP modal is already rendered by AuthContext */}
+      
     </div>
   );
 }

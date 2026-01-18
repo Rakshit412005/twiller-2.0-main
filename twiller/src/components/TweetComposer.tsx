@@ -22,7 +22,7 @@ import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify";
 
 const MAX_AUDIO_SIZE_MB = 100;
-const MAX_AUDIO_DURATION = 300; // seconds
+const MAX_AUDIO_DURATION = 300; 
 
 const TweetComposer = ({ onTweetPosted }: any) => {
   const { user } = useAuth();
@@ -82,11 +82,11 @@ const TweetComposer = ({ onTweetPosted }: any) => {
         otp,
       });
 
-      // success path
+      
       setOtpVerified(true);
       toast.success("OTP verified successfully");
     } catch (err: any) {
-      // error path (wrong OTP / expired OTP)
+      
       const message = err?.response?.data?.error || "Invalid or expired OTP";
       toast.error(message);
     }

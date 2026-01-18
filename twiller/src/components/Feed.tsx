@@ -32,7 +32,7 @@ const triggerNotificationIfMatched = (
   tweet: any,
   notificationsEnabled: boolean
 ) => {
- // console.log("Checking tweet:", tweet.content);
+ 
 
   if (!notificationsEnabled) return;
   if (!("Notification" in window)) return;
@@ -41,7 +41,7 @@ const triggerNotificationIfMatched = (
   const text = tweet.content.toLowerCase();
 
   if ((text.includes("cricket") && text.includes("science")) || text.includes("science") && text.includes("cricket")) {
-   // console.log("🔔 MATCH FOUND – firing notification");
+   
     new Notification("New Tweet Alert", {
       body: tweet.content,
     });
@@ -125,7 +125,7 @@ const Feed = () => {
       const res = await axiosInstance.get("/post");
       setTweets(res.data);
 
-      // 🔔 check existing tweets
+      
      
     } catch (error) {
       console.error(error);
@@ -176,7 +176,7 @@ const Feed = () => {
         return;
       }
 
-      // 🔄 TOGGLE LOGIC
+     
       if (!notificationsEnabled) {
         const permission = await Notification.requestPermission();
 

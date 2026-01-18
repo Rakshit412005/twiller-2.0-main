@@ -22,7 +22,7 @@ router.post("/track-login", async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // ⏰ MOBILE TIME RESTRICTION (10 AM – 1 PM)
+   
     if (deviceType === "mobile") {
       const hour = new Date().getHours();
       if (hour < 10 || hour >= 13) {
@@ -33,12 +33,12 @@ router.post("/track-login", async (req, res) => {
     }
 console.log("OTP VERIFIED FLAG:", user.loginOtpVerified);
 
-// 🔐 Chrome requires OTP (ONLY ONCE)
+
 if (browser === "Chrome") {
   if (!user.loginOtpVerified) {
     return res.status(401).json({ error: "OTP_REQUIRED" });
   }
-  // ✅ DO NOT reset here
+  
 }
 
 

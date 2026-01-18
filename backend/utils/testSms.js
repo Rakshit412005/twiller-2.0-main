@@ -12,9 +12,9 @@
 // const sendTestSms = async () => {
 //   try {
 //     const msg = await client.messages.create({
-//       body: "✅ Twilio SMS test successful. OTP system ready.",
+//       body: " Twilio SMS test successful. OTP system ready.",
 //       from: process.env.TWILIO_PHONE_NUMBER,
-//       to: "+918535071013", // 🔴 PUT YOUR REAL MOBILE NUMBER WITH COUNTRY CODE
+//       to: "+918535071013", 
 //     });
 
 //     console.log("SMS sent:", msg.sid);

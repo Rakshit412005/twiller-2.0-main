@@ -14,7 +14,7 @@ const isValidPaymentTime = () => {
 
   const hour = new Date().getHours();
 
-  // Allow payments from 10 AM (10) to 11 PM (23)
+  
   return hour >= 10 && hour < 23;
 };
 
@@ -69,7 +69,7 @@ router.post("/verify", async (req, res) => {
       userId,
     } = req.body;
 
-    // 1️⃣ Verify signature
+    
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -80,13 +80,13 @@ router.post("/verify", async (req, res) => {
       return res.status(400).json({ error: "Invalid signature" });
     }
 
-    // 2️⃣ Get plan details
+   
     const planData = PLANS[plan];
     if (!planData) {
       return res.status(400).json({ error: "Invalid plan selected" });
     }
 
-    // 3️⃣ Update user subscription
+    
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 30);
 
@@ -104,7 +104,7 @@ router.post("/verify", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // 4️⃣ 📧 SEND INVOICE EMAIL
+  
     await sendInvoiceMail({
       email: user.email,
       username: user.username,
@@ -115,7 +115,7 @@ router.post("/verify", async (req, res) => {
       expiryDate,
     });
 
-    // 5️⃣ Success response
+   
     res.json({
       success: true,
       message: "Payment successful & invoice sent",

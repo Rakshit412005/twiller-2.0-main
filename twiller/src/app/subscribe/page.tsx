@@ -26,7 +26,7 @@ export default function SubscribePage() {
     try {
       setLoading(true);
 
-      // ✅ load razorpay safely
+      
       const loaded = await loadRazorpay();
       if (!loaded) {
         toast.error("Razorpay SDK failed to load");

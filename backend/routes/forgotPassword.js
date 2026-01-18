@@ -30,7 +30,7 @@ router.post("/forgot-password", async (req, res) => {
       }
     }
 
-    // ✅ SAFE UPDATE (no validation)
+   
     await User.updateOne(
       { email },
       { $set: { "forgotPassword.lastRequestedAt": now } }

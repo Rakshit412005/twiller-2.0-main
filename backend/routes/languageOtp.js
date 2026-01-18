@@ -25,7 +25,7 @@ router.post("/send", async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // 🚫 Block resend if OTP already valid
+   
     if (
       user.languageVerification &&
       new Date() < user.languageVerification.expiresAt &&
@@ -55,7 +55,7 @@ router.post("/send", async (req, res) => {
       target: cleanTarget,
     });
 
-    // 🇫🇷 EMAIL
+ 
     if (language === "fr") {
       await sendEmailOtp(user.email, otp);
     } else {

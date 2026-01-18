@@ -59,7 +59,7 @@ loginHistory: [
   {
     browser: String,
     os: String,
-    deviceType: String, // desktop | mobile
+    deviceType: String, 
     ipAddress: String,
     loginAt: {
       type: Date,
