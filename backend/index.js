@@ -40,21 +40,7 @@ app.get("/healthz", (req, res) => {
 
 
 
-const port = process.env.PORT || 5000;
-const url = process.env.MONGO_URI;
 
-
-mongoose
-  .connect(url)
-  .then(() => {
-    console.log("✅ Connected to MongoDB");
-    app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
-    });
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err.message);
-  });
 
 app.post("/api/register", async (req, res) => {
   try {
@@ -251,4 +237,18 @@ app.post("/retweet/:tweetid", async (req, res) => {
 });
 
 
+const port = process.env.PORT || 5000;
+const url = process.env.MONGO_URI;
 
+
+mongoose
+  .connect(url)
+  .then(() => {
+    console.log("✅ Connected to MongoDB");
+    app.listen(port, () => {
+      console.log(`🚀 Server running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err.message);
+  });
