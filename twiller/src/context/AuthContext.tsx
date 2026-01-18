@@ -104,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       
-      const res = await axiosInstance.get("/loggedinuser", {
+      const res = await axiosInstance.get("/api/loggedinuser", {
         params: { email },
       });
 
@@ -167,7 +167,7 @@ const verifyLoginOtp = async (otp: string) => {
     });
 
     
-    const res = await axiosInstance.get("/loggedinuser", {
+    const res = await axiosInstance.get("/api/loggedinuser", {
       params: { email: pendingOtpUser.email },
     });
 
@@ -207,7 +207,7 @@ const verifyLoginOtp = async (otp: string) => {
   }
 
   try {
-    const res = await axiosInstance.get("/loggedinuser", {
+    const res = await axiosInstance.get("/api/loggedinuser", {
       params: { email: firebaseUser.email },
     });
 
@@ -247,7 +247,7 @@ const verifyLoginOtp = async (otp: string) => {
       const usercred = await signInWithEmailAndPassword(auth, email, password);
       const firebaseuser = usercred.user;
 
-      const res = await axiosInstance.get("/loggedinuser", {
+      const res = await axiosInstance.get("/api/loggedinuser", {
         params: { email: firebaseuser.email },
       });
 
@@ -304,7 +304,7 @@ const verifyLoginOtp = async (otp: string) => {
         "https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg?auto=compress&cs=tinysrgb&w=400",
       email: user.email,
     };
-    const res = await axiosInstance.post("/register", newuser);
+    const res = await axiosInstance.post("/api/register", newuser);
     if (res.data) {
       const freshUser = {
         ...res.data,
@@ -353,7 +353,7 @@ const verifyLoginOtp = async (otp: string) => {
       ...profileData,
     };
     const res = await axiosInstance.patch(
-      `/userupdate/${user.email}`,
+      `/api/userupdate/${user.email}`,
       updatedUser
     );
     if (res.data) {
@@ -378,7 +378,7 @@ const verifyLoginOtp = async (otp: string) => {
      
       let userData;
       try {
-        const res = await axiosInstance.get("/loggedinuser", {
+        const res = await axiosInstance.get("/api/loggedinuser", {
           params: { email: firebaseuser.email },
         });
         userData = res.data;
@@ -392,7 +392,7 @@ const verifyLoginOtp = async (otp: string) => {
           email: firebaseuser.email,
         };
 
-        const registerRes = await axiosInstance.post("/register", newuser);
+        const registerRes = await axiosInstance.post("/api/register", newuser);
         userData = registerRes.data;
       }
 
@@ -409,7 +409,7 @@ const verifyLoginOtp = async (otp: string) => {
       }
 
     
-      const freshRes = await axiosInstance.get("/loggedinuser", {
+      const freshRes = await axiosInstance.get("/api/loggedinuser", {
         params: { email: firebaseuser.email },
       });
 

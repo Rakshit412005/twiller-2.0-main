@@ -56,7 +56,7 @@ mongoose
     console.error("❌ MongoDB connection error:", err.message);
   });
 
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   try {
     const existinguser = await User.findOne({ email: req.body.email });
     if (existinguser) {
@@ -70,7 +70,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.get("/loggedinuser", async (req, res) => {
+app.get("/api/loggedinuser", async (req, res) => {
   try {
     const { email } = req.query;
     const browser = req.headers["x-browser"]; 
@@ -94,7 +94,7 @@ app.get("/loggedinuser", async (req, res) => {
 });
 
 
-app.patch("/userupdate/:email", async (req, res) => {
+app.patch("/api/userupdate/:email", async (req, res) => {
   try {
     const { email } = req.params;
     const updated = await User.findOneAndUpdate(
