@@ -15,8 +15,13 @@ import { useAuth } from "@/context/AuthContext";
 import axiosInstance from "@/lib/axiosInstance";
 
 export default function TweetCard({ tweet }: any) {
+  
   const { user } = useAuth();
   const [tweetstate, settweetstate] = useState(tweet);
+  if (!tweetstate?.author) {
+  return null;
+}
+
 
 const likeTweet = async (tweetId: string) => {
   if (!user || !user._id) {
@@ -68,10 +73,12 @@ const retweetTweet = async (tweetId: string) => {
         <div className="flex space-x-3">
           <Avatar className="h-12 w-12">
             <AvatarImage
-              src={tweetstate.author.avatar}
-              alt={tweetstate.author.displayName}
+              src={tweetstate?.author?.avatar || ""}
+              alt={tweetstate?.author?.displayName || "User"}
             />
-            <AvatarFallback>{tweetstate.author.displayName}</AvatarFallback>
+            <AvatarFallback>
+              {tweetstate?.author?.displayName?.[0] || "U"}
+            </AvatarFallback>
           </Avatar>
 
           <div className="flex-1 min-w-0">
