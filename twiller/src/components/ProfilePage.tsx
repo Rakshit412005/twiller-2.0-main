@@ -100,28 +100,44 @@ const tweets: Tweet[] = [
 ];
 export default function ProfilePage() {
   const { user } = useAuth();
+
+  // ✅ ALL hooks first — NO conditions before them
   const [activeTab, setActiveTab] = useState("posts");
   const [showEditModal, setShowEditModal] = useState(false);
-
-  if (!user) return null;
   const [tweets, setTweets] = useState<any>([]);
   const [loading, setloading] = useState(false);
-  const fetchTweets = async () => {
-    try {
-      setloading(true);
-      const res = await axiosInstance.get("/post");
-      setTweets(res.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setloading(false);
-    }
-  };
+
   useEffect(() => {
+    if (!user) return;
+
+    const fetchTweets = async () => {
+      try {
+        setloading(true);
+        const res = await axiosInstance.get("/post");
+        setTweets(res.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setloading(false);
+      }
+    };
+
     fetchTweets();
-  }, []);
-  // Filter tweets by current user
-  const userTweets = tweets.filter((tweet: any) => tweet.author._id === user._id);
+  }, [user]);
+
+  // ✅ SAFE render guard AFTER hooks
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-400">
+        Loading profile…
+      </div>
+    );
+  }
+
+  const userTweets = tweets.filter(
+    (tweet: any) => tweet.author?._id === user._id
+  );
+
 
   return (
     <div className="min-h-screen">
