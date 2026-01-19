@@ -41,16 +41,43 @@ app.get("/healthz", (req, res) => {
 
 app.post("/api/register", async (req, res) => {
   try {
-    const existinguser = await User.findOne({ email: req.body.email });
-    if (existinguser) return res.status(200).send(existinguser);
+    const {
+      email,
+      username,
+      displayName,
+      avatar,
+      authProvider,
+      password,
+    } = req.body;
 
-    const newUser = new User(req.body);
+    if (!email) {
+      return res.status(400).json({ error: "Email required" });
+    }
+
+    const existinguser = await User.findOne({ email });
+    if (existinguser) {
+      return res.status(200).json(existinguser);
+    }
+
+    const newUser = new User({
+      email,
+      username: username || email.split("@")[0],
+      displayName: displayName || "User",
+      avatar:
+        avatar ||
+        "https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg",
+      authProvider: authProvider || "google", // 🔥 CRITICAL FIX
+      password: authProvider === "email" ? password : undefined,
+    });
+
     await newUser.save();
-    return res.status(201).send(newUser);
+    return res.status(201).json(newUser);
   } catch (error) {
-    return res.status(400).send({ error: error.message });
+    console.error("REGISTER ERROR:", error);
+    return res.status(400).json({ error: error.message });
   }
 });
+
 
 app.get("/api/loggedinuser", async (req, res) => {
   try {

@@ -214,24 +214,30 @@ const verifyLoginOtp = async (otp: string) => {
     setUser(res.data);
     localStorage.setItem("twitter-user", JSON.stringify(res.data));
   } catch (err: any) {
-    if (err.response?.data?.error === "OTP_REQUIRED") {
-      const pending = {
-        userId: err.response.data.userId,
-        email: firebaseUser.email,
-      };
-
-      setPendingOtpUser(pending);
-      localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
-      toast.info("Please verify OTP to continue");
-
-     
-      setIsLoading(false);
-      return;
-    }
-
-    
-    console.warn("loggedinuser failed:", err);
+  // ✅ NEW USER — backend record not created yet
+  if (err.response?.status === 404) {
+    console.log("User not yet in backend, skipping fetch");
+    setIsLoading(false);
+    return;
   }
+
+  if (err.response?.data?.error === "OTP_REQUIRED") {
+    const pending = {
+      userId: err.response.data.userId,
+      email: firebaseUser.email,
+    };
+
+    setPendingOtpUser(pending);
+    localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
+    toast.info("Please verify OTP to continue");
+
+    setIsLoading(false);
+    return;
+  }
+
+  console.warn("loggedinuser failed:", err);
+}
+
 
   setIsLoading(false);
 });
@@ -364,66 +370,59 @@ const verifyLoginOtp = async (otp: string) => {
     setIsLoading(false);
   };
   const googlesignin = async () => {
-    setIsLoading(true);
+  setIsLoading(true);
 
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const firebaseuser = result.user;
+
+    if (!firebaseuser?.email) {
+      throw new Error("No email found in Google account");
+    }
+
+    // 1️⃣ ALWAYS TRY REGISTER FIRST
+    const newuser = {
+      username: firebaseuser.email.split("@")[0],
+      displayName: firebaseuser.displayName || "User",
+      avatar:
+        firebaseuser.photoURL ||
+        "https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg",
+      email: firebaseuser.email,
+      authProvider: "google",
+    };
+
+    let userData;
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const firebaseuser = result.user;
-
-      if (!firebaseuser?.email) {
-        throw new Error("No email found in Google account");
-      }
-
-     
-      let userData;
-      try {
-        const res = await axiosInstance.get("/api/loggedinuser", {
-          params: { email: firebaseuser.email },
-        });
-        userData = res.data;
-      } catch {
-        const newuser = {
-          username: firebaseuser.email.split("@")[0],
-          displayName: firebaseuser.displayName || "User",
-          avatar:
-            firebaseuser.photoURL ||
-            "https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg",
-          email: firebaseuser.email,
-        };
-
-        const registerRes = await axiosInstance.post("/api/register", newuser);
-        userData = registerRes.data;
-      }
-
-      if (!userData) {
-        throw new Error("User creation failed");
-      }
-
-      
-      const loginResult = await trackLogin(userData._id, userData.email);
-
-      if (loginResult === "OTP_REQUIRED") {
-
-        return;
-      }
-
-    
-      const freshRes = await axiosInstance.get("/api/loggedinuser", {
+      const registerRes = await axiosInstance.post("/api/register", newuser);
+      userData = registerRes.data;
+    } catch (err: any) {
+      // user already exists → fetch
+      const res = await axiosInstance.get("/api/loggedinuser", {
         params: { email: firebaseuser.email },
       });
-
-      setUser(freshRes.data);
-      localStorage.setItem("twitter-user", JSON.stringify(freshRes.data));
-    } catch (error: any) {
-      console.error("Google Sign-In Error:", error);
-      toast.error(
-        error.response?.data?.message || error.message || "Login failed"
-      );
-    } finally {
-      setIsLoading(false);
+      userData = res.data;
     }
-  };
+
+    // 2️⃣ TRACK LOGIN (OTP handled here)
+    const loginResult = await trackLogin(userData._id, userData.email);
+    if (loginResult === "OTP_REQUIRED") return;
+
+    // 3️⃣ FINAL FETCH
+    const freshRes = await axiosInstance.get("/api/loggedinuser", {
+      params: { email: firebaseuser.email },
+    });
+
+    setUser(freshRes.data);
+    localStorage.setItem("twitter-user", JSON.stringify(freshRes.data));
+  } catch (error: any) {
+    console.error("Google Sign-In Error:", error);
+    toast.error(error.response?.data?.error || "Google login failed");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <AuthContext.Provider
