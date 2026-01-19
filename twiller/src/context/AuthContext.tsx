@@ -192,10 +192,15 @@ const verifyLoginOtp = async (otp: string) => {
   useEffect(() => {
     
 
-  const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
+const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
   if (!firebaseUser?.email) {
     setUser(null);
-   
+    setIsLoading(false);
+    return;
+  }
+
+  // 🔒 Do nothing while OTP flow is active
+  if (pendingOtpUser) {
     setIsLoading(false);
     return;
   }
@@ -208,33 +213,19 @@ const verifyLoginOtp = async (otp: string) => {
     setUser(res.data);
     localStorage.setItem("twitter-user", JSON.stringify(res.data));
   } catch (err: any) {
-  // ✅ NEW USER — backend record not created yet
-  if (err.response?.status === 404) {
-    console.log("User not yet in backend, skipping fetch");
-    setIsLoading(false);
-    return;
+    // 👶 Google user just created, backend not yet synced
+    if (err.response?.status === 404) {
+      console.log("User not yet in backend, skipping fetch");
+      setIsLoading(false);
+      return;
+    }
+
+    console.warn("loggedinuser failed:", err);
   }
-
-  if (err.response?.data?.error === "OTP_REQUIRED") {
-    const pending = {
-      userId: err.response.data.userId,
-      email: firebaseUser.email,
-    };
-
-    setPendingOtpUser(pending);
-    localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
-    toast.info("Please verify OTP to continue");
-
-    setIsLoading(false);
-    return;
-  }
-
-  console.warn("loggedinuser failed:", err);
-}
-
 
   setIsLoading(false);
 });
+
 
 
     return () => unsubcribe();
