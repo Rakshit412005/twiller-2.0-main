@@ -46,6 +46,7 @@ if (browser === "Chrome") {
 await User.updateOne(
   { _id: userId },
   {
+    $set: { loginOtpVerified: false }, // ✅ ADD THIS
     $push: {
       loginHistory: {
         $each: [{
@@ -61,6 +62,7 @@ await User.updateOne(
     },
   }
 );
+
 
 
 
