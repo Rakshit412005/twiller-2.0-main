@@ -118,43 +118,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem("twitter-user", JSON.stringify(freshUser));
       }
     } catch (err: any) {
-      const errorCode = err.response?.data?.error;
+  if (
+    err.response?.status === 401 &&
+    err.response?.data?.error === "OTP_REQUIRED"
+  ) {
+    if (!otpRequestedRef.current) {
+      otpRequestedRef.current = true;
 
-      if (errorCode === "OTP_REQUIRED") {
-        if (!otpRequestedRef.current) {
-          otpRequestedRef.current = true;
+      await axiosInstance.post("/api/login-otp/send", { userId });
 
-          await axiosInstance.post("/api/login-otp/send", { userId });
+      const pending = { userId, email };
+      setPendingOtpUser(pending);
+      localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
 
-          const pending = { userId, email };
-          setPendingOtpUser(pending);
-          localStorage.setItem("pendingLoginOtp", JSON.stringify(pending));
-
-          toast.info("OTP sent to your email. Please verify.");
-        }
-
-        
-
-
-        return "OTP_REQUIRED";
-      }
-
-      
-      if (errorCode) {
-        toast.error(errorCode);
-        throw new Error(errorCode);
-      }
-
-      toast.error("Login blocked by security policy");
-      throw err;
+      toast.info("OTP sent to your email. Please verify.");
     }
+
+    return "OTP_REQUIRED";
+  }
+
+  
+  toast.error(err.response?.data?.error || "Login failed");
+  throw err;
+}
+
   };
 
 const verifyLoginOtp = async (otp: string) => {
   if (!pendingOtpUser) return;
 
   try {
-    
     await axiosInstance.post("/api/login-otp/verify", {
       userId: pendingOtpUser.userId,
       otp,
@@ -166,7 +159,6 @@ const verifyLoginOtp = async (otp: string) => {
       ...getDeviceInfo(),
     });
 
-    
     const res = await axiosInstance.get("/api/loggedinuser", {
       params: { email: pendingOtpUser.email },
     });
@@ -174,9 +166,10 @@ const verifyLoginOtp = async (otp: string) => {
     setUser(res.data);
     localStorage.setItem("twitter-user", JSON.stringify(res.data));
 
-   
-    hasTrackedLogin.current = true;
+    
     otpRequestedRef.current = false;
+    hasTrackedLogin.current = true;
+
     localStorage.removeItem("pendingLoginOtp");
     setPendingOtpUser(null);
 
@@ -185,6 +178,7 @@ const verifyLoginOtp = async (otp: string) => {
     toast.error(err.response?.data?.error || "Invalid OTP");
   }
 };
+
 
 
   const hasTrackedLogin = useRef(false);
