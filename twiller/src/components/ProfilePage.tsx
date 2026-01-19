@@ -158,11 +158,15 @@ export default function ProfilePage() {
         <div className="absolute -bottom-16 left-4">
           <div className="relative">
             <Avatar className="h-32 w-32 border-4 border-black">
-              <AvatarImage src={user.avatar} alt={user.displayName} />
+              <AvatarImage
+                src={user?.avatar}
+                alt={user?.displayName || "User"}
+              />
               <AvatarFallback className="text-2xl">
-                {user.displayName[0]}
+                {user?.displayName?.[0] || "U"}
               </AvatarFallback>
             </Avatar>
+
             <Button
               variant="ghost"
               size="sm"

@@ -74,8 +74,7 @@ export default function RightSidebar() {
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full"
             onClick={() => router.push("/subscribe")}
           >
-           {t(user?.plan === "gold" ? `${t("premium")}` : `${t("subscribe")}`)} 
-            
+            {t(user?.plan === "gold" ? `${t("premium")}` : `${t("subscribe")}`)}
           </Button>
           {user && (
             <p className="mt-3 text-sm text-gray-400">
@@ -91,15 +90,23 @@ export default function RightSidebar() {
       {/* Who to follow */}
       <Card className="bg-gray-900 border-gray-800">
         <CardContent className="p-4">
-          <h3 className="text-white text-xl font-bold mb-4">{t("you_might_like")}</h3>
+          <h3 className="text-white text-xl font-bold mb-4">
+            {t("you_might_like")}
+          </h3>
           <div className="space-y-4">
             {suggestions.map((user) => (
               <div key={user.id} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatar} alt={user.displayName} />
-                    <AvatarFallback>{user.displayName[0]}</AvatarFallback>
+                    <AvatarImage
+                      src={user?.avatar}
+                      alt={user?.displayName || "User"}
+                    />
+                    <AvatarFallback>
+                      {user?.displayName?.[0] || "U"}
+                    </AvatarFallback>
                   </Avatar>
+
                   <div>
                     <div className="flex items-center space-x-1">
                       <span className="text-white font-semibold">

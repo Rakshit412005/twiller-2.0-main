@@ -202,14 +202,14 @@ const TweetComposer = ({ onTweetPosted }: any) => {
       <CardContent className="p-4">
         <div className="flex space-x-4">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={user.avatar} />
-            <AvatarFallback>{user.displayName[0]}</AvatarFallback>
+            <AvatarImage src={user?.avatar} />
+            <AvatarFallback>{user?.displayName?.[0] || "U"}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1">
             <form onSubmit={handleSubmit}>
               <Textarea
-                placeholder= {t("whats_happening")}
+                placeholder={t("whats_happening")}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="bg-transparent border-none text-xl text-white resize-none min-h-[120px]"
