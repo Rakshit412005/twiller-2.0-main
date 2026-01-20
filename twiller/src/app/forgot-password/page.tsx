@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
 
       await axiosInstance.post("/api/auth/forgot-password", { email });
       await sendPasswordResetEmail(auth, email);
-
+      alert("Reset password link will surely be present in you mail SPAM section, please mark it is not spam and continue. Thank You !")
       toast.success("Password reset email sent");
     } catch (err: any) {
       toast.error(err.response?.data?.error || "Failed");
