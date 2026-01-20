@@ -1,13 +1,19 @@
-import { Resend } from "resend";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const client = SibApiV3Sdk.ApiClient.instance;
+client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
 export const sendLoginOtpMail = async (email, otp) => {
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
-    to: email,
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+  await apiInstance.sendTransacEmail({
+    sender: {
+      email: process.env.BREVO_SENDER_EMAIL,
+      name: process.env.BREVO_SENDER_NAME,
+    },
+    to: [{ email }],
     subject: "Login Verification OTP",
-    html: `
+    htmlContent: `
       <h2>Login Verification</h2>
       <p>We detected a login from a new browser.</p>
       <h1>${otp}</h1>

@@ -1,6 +1,7 @@
-import { Resend } from "resend";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const client = SibApiV3Sdk.ApiClient.instance;
+client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
 export const sendInvoiceMail = async ({
   email,
@@ -10,25 +11,27 @@ export const sendInvoiceMail = async ({
   paymentId,
   expiryDate,
 }) => {
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
-    to: email,
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+  await apiInstance.sendTransacEmail({
+    sender: {
+      email: process.env.BREVO_SENDER_EMAIL,
+      name: "Twiller Billing",
+    },
+    to: [{ email }],
     subject: "Twiller Subscription Invoice",
-    html: `
+    htmlContent: `
       <h2>🧾 Payment Invoice - Twiller</h2>
       <p>Hello <b>${name}</b>,</p>
 
-      <p>Your subscription payment was successful 🎉</p>
-
-      <table border="1" cellpadding="10" cellspacing="0">
-        <tr><td><b>Plan</b></td><td>${plan.toUpperCase()}</td></tr>
-        <tr><td><b>Amount Paid</b></td><td>₹${amount}</td></tr>
-        <tr><td><b>Payment ID</b></td><td>${paymentId}</td></tr>
-        <tr><td><b>Valid Till</b></td><td>${expiryDate.toDateString()}</td></tr>
+      <table border="1" cellpadding="10">
+        <tr><td>Plan</td><td>${plan}</td></tr>
+        <tr><td>Amount</td><td>₹${amount}</td></tr>
+        <tr><td>Payment ID</td><td>${paymentId}</td></tr>
+        <tr><td>Valid Till</td><td>${expiryDate.toDateString()}</td></tr>
       </table>
 
-      <p>Thank you for subscribing to <b>Twiller Premium</b> 🚀</p>
-      <p>— Team Twiller</p>
+      <p>Thank you for subscribing 🚀</p>
     `,
   });
 };

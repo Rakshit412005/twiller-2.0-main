@@ -1,15 +1,20 @@
-import { Resend } from "resend";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const client = SibApiV3Sdk.ApiClient.instance;
+client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
 export const sendEmailOtp = async (email, otp) => {
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
-    to: email,
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+  await apiInstance.sendTransacEmail({
+    sender: {
+      email: process.env.BREVO_SENDER_EMAIL,
+      name: process.env.BREVO_SENDER_NAME,
+    },
+    to: [{ email }],
     subject: "Language Change OTP",
-    html: `
+    htmlContent: `
       <h2>Language Verification</h2>
-      <p>Your OTP is:</p>
       <h1>${otp}</h1>
       <p>Valid for 5 minutes</p>
     `,

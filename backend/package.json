@@ -23,6 +23,7 @@
     "nodemailer": "^7.0.12",
     "razorpay": "^2.9.6",
     "resend": "^6.8.0",
+    "sib-api-v3-sdk": "^8.5.0",
     "streamifier": "^0.1.1",
     "twilio": "^5.11.2",
     "uuid": "^13.0.0"
