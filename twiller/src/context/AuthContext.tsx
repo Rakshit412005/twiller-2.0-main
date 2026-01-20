@@ -82,6 +82,8 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  
+
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -91,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   } | null>(null);
   const [otp, setOtp] = useState("");
   const otpRequestedRef = useRef(false);
+  const loginBlockedRef = useRef(false);
 
   const trackLogin = async (userId: string, email: string) => {
     try {
@@ -138,8 +141,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   
-  toast.error(err.response?.data?.error || "Login failed");
+if (err.response?.status === 403) {
+  toast.error(err.response.data.error);
+
+  await signOut(auth);
+  setUser(null);
+  localStorage.removeItem("twitter-user");
+
+  loginBlockedRef.current = true;
   throw err;
+}
+
 }
 
   };
@@ -172,6 +184,7 @@ const verifyLoginOtp = async (otp: string) => {
 
     localStorage.removeItem("pendingLoginOtp");
     setPendingOtpUser(null);
+    loginBlockedRef.current = false;
 
     toast.success("Login verified");
   } catch (err: any) {
@@ -199,7 +212,13 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
     return;
   }
 
-  // 🔒 Do nothing while OTP flow is active
+    if (loginBlockedRef.current) {
+    await signOut(auth);
+    setUser(null);
+    setIsLoading(false);
+    return;
+  }
+  
   if (pendingOtpUser) {
     setIsLoading(false);
     return;
@@ -213,7 +232,7 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
     setUser(res.data);
     localStorage.setItem("twitter-user", JSON.stringify(res.data));
   } catch (err: any) {
-    // 👶 Google user just created, backend not yet synced
+    
     if (err.response?.status === 404) {
       console.log("User not yet in backend, skipping fetch");
       setIsLoading(false);
@@ -321,6 +340,8 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
   }
 
   hasTrackedLogin.current = false;
+  loginBlockedRef.current = false;
+
   setUser(null);
   await signOut(auth);
   localStorage.removeItem("twitter-user");
@@ -366,7 +387,7 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
       throw new Error("No email found in Google account");
     }
 
-    // 1️⃣ ALWAYS TRY REGISTER FIRST
+    
     const newuser = {
       username: firebaseuser.email.split("@")[0],
       displayName: firebaseuser.displayName || "User",
@@ -382,18 +403,18 @@ const unsubcribe = onAuthStateChanged(auth, async (firebaseUser) => {
       const registerRes = await axiosInstance.post("/api/register", newuser);
       userData = registerRes.data;
     } catch (err: any) {
-      // user already exists → fetch
+      
       const res = await axiosInstance.get("/api/loggedinuser", {
         params: { email: firebaseuser.email },
       });
       userData = res.data;
     }
 
-    // 2️⃣ TRACK LOGIN (OTP handled here)
+    
     const loginResult = await trackLogin(userData._id, userData.email);
     if (loginResult === "OTP_REQUIRED") return;
 
-    // 3️⃣ FINAL FETCH
+    
     const freshRes = await axiosInstance.get("/api/loggedinuser", {
       params: { email: firebaseuser.email },
     });

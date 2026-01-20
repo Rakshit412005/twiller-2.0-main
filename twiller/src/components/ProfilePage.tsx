@@ -101,7 +101,7 @@ const tweets: Tweet[] = [
 export default function ProfilePage() {
   const { user } = useAuth();
 
-  // ✅ ALL hooks first — NO conditions before them
+  
   const [activeTab, setActiveTab] = useState("posts");
   const [showEditModal, setShowEditModal] = useState(false);
   const [tweets, setTweets] = useState<any>([]);
@@ -125,7 +125,7 @@ export default function ProfilePage() {
     fetchTweets();
   }, [user]);
 
-  // ✅ SAFE render guard AFTER hooks
+  
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-400">

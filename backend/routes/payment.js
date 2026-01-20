@@ -12,7 +12,7 @@ const router = express.Router();
 const isValidPaymentTime = () => {
   const now = new Date();
 
-  // Convert to IST
+  
   const istHour = now.toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
     hour: "2-digit",

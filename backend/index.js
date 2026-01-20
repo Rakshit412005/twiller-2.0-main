@@ -66,7 +66,7 @@ app.post("/api/register", async (req, res) => {
       avatar:
         avatar ||
         "https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg",
-      authProvider: authProvider || "google", // 🔥 CRITICAL FIX
+      authProvider: authProvider || "google", 
       password: authProvider === "email" ? password : undefined,
     });
 

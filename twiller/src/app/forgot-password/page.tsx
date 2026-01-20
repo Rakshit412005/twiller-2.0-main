@@ -26,12 +26,12 @@ export default function ForgotPasswordPage() {
     try {
       setLoading(true);
 
-      // 1️⃣ Backend rate-limit check
+      
       await axiosInstance.post("/api/auth/forgot-password", {
         email: email.toLowerCase(),
       });
 
-      // 2️⃣ Firebase reset email
+      
       await sendPasswordResetEmail(auth, email, {
         url: `${window.location.origin}/reset-password`,
         handleCodeInApp: true,
