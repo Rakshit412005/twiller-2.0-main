@@ -1,16 +1,10 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmailOtp = async (email, otp) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  await transporter.sendMail({
-    from: `"Twiller" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM,
     to: email,
     subject: "Language Change OTP",
     html: `

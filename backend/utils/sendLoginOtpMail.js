@@ -1,15 +1,10 @@
-import nodemailer from "nodemailer";
-export const sendLoginOtpMail = async (email, otp) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+import { Resend } from "resend";
 
-  await transporter.sendMail({
-    from: `"Twiller Security" <${process.env.EMAIL_USER}>`,
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export const sendLoginOtpMail = async (email, otp) => {
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM,
     to: email,
     subject: "Login Verification OTP",
     html: `
