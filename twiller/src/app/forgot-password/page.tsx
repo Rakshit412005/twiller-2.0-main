@@ -11,7 +11,6 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -19,17 +18,35 @@ export default function ForgotPasswordPage() {
   if (!mounted) return null;
 
   const handleReset = async () => {
-    if (!email) return toast.error("Enter email");
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
 
     try {
       setLoading(true);
 
-      await axiosInstance.post("/api/auth/forgot-password", { email });
-      await sendPasswordResetEmail(auth, email);
-      alert("Reset password link will surely be present in you mail SPAM section, please mark it is not spam and continue. Thank You !")
-      toast.success("Password reset email sent");
+      // 1️⃣ Backend rate-limit check
+      await axiosInstance.post("/api/auth/forgot-password", {
+        email: email.toLowerCase(),
+      });
+
+      // 2️⃣ Firebase reset email
+      await sendPasswordResetEmail(auth, email, {
+        url: `${window.location.origin}/reset-password`,
+        handleCodeInApp: true,
+      });
+
+      alert("Reset password link will surely be present in your gmail's SPAM section, please mark it as NOT SPAM and continue, Thank You!")
+      toast.success(
+        "Reset link sent. Please check Inbox / Spam folder."
+      );
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Failed");
+      if (err.response?.status === 429) {
+        toast.warning(err.response.data.error);
+      } else {
+        toast.error(err.response?.data?.error || "Failed to send reset email");
+      }
     } finally {
       setLoading(false);
     }
@@ -50,9 +67,9 @@ export default function ForgotPasswordPage() {
         <button
           onClick={handleReset}
           disabled={loading}
-          className="w-full bg-blue-500 py-2 rounded"
+          className="w-full bg-blue-500 py-2 rounded disabled:opacity-50"
         >
-          Send Reset Email
+          {loading ? "Sending..." : "Send Reset Email"}
         </button>
       </div>
     </div>

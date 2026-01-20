@@ -3,25 +3,26 @@ import User from "../models/user.js";
 
 const router = express.Router();
 
-/**
- * POST /api/auth/forgot-password
- * Checks if user can request reset today
- */
+const ONE_DAY = 24 * 60 * 60 * 1000;
+
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
 
-    const user = await User.findOne({ email }).lean();
+    const normalizedEmail = email.toLowerCase();
+
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const last = user.forgotPassword?.lastRequestedAt;
-    const now = new Date();
+    const lastRequested = user.forgotPassword?.lastRequestedAt;
 
-    if (last) {
-      const diff = now - new Date(last);
-      const ONE_DAY = 24 * 60 * 60 * 1000;
+    if (lastRequested) {
+      const diff = Date.now() - new Date(lastRequested).getTime();
 
       if (diff < ONE_DAY) {
         return res.status(429).json({
@@ -30,18 +31,17 @@ router.post("/forgot-password", async (req, res) => {
       }
     }
 
-   
-    await User.updateOne(
-      { email },
-      { $set: { "forgotPassword.lastRequestedAt": now } }
-    );
+    user.forgotPassword = {
+      lastRequestedAt: new Date(),
+    };
 
-    res.status(200).json({ success: true });
+    await user.save({ validateBeforeSave: false });
+
+    res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("FORGOT PASSWORD ERROR:", err);
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
-
-
 
 export default router;

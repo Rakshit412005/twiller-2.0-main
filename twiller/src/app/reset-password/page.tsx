@@ -10,18 +10,27 @@ export default function ResetPassword({ searchParams }: any) {
   const auth = getAuth();
 
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleGenerate = () => {
-    const pwd = generatePassword();
+    const pwd = generatePassword(10);
     setPassword(pwd);
   };
 
   const handleReset = async () => {
+    if (!password || password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+
     try {
+      setLoading(true);
       await confirmPasswordReset(auth, oobCode, password);
       toast.success("Password updated successfully");
     } catch {
-      toast.error("Invalid or expired link");
+      toast.error("Invalid or expired reset link");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,15 +45,19 @@ export default function ResetPassword({ searchParams }: any) {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button onClick={handleGenerate} className="mb-2 text-blue-500">
+      <button
+        onClick={handleGenerate}
+        className="mb-2 text-blue-500 underline"
+      >
         Generate Password
       </button>
 
       <button
         onClick={handleReset}
-        className="w-full bg-green-500 text-white p-2"
+        disabled={loading}
+        className="w-full bg-green-500 text-white p-2 disabled:opacity-50"
       >
-        Create New Password
+        {loading ? "Updating..." : "Create New Password"}
       </button>
     </div>
   );
