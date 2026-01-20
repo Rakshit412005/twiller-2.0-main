@@ -12,9 +12,15 @@ const router = express.Router();
 const isValidPaymentTime = () => {
   const now = new Date();
 
-  const hour = new Date().getHours();
+  // Convert to IST
+  const istHour = now.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    hour12: false,
+  });
 
-  
+  const hour = parseInt(istHour, 10);
+
   return hour >= 10 && hour < 23;
 };
 
