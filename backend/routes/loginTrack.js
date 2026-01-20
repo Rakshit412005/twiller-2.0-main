@@ -27,7 +27,7 @@ router.post("/track-login", async (req, res) => {
       const hour = new Date().getHours();
       if (hour < 10 || hour >= 13) {
         return res.status(403).json({
-          error: "Mobile access allowed only between 10 AM and 1 PM",
+          error: "Mobile access allowed only between 10 AM to 1 PM",
         });
       }
     }
