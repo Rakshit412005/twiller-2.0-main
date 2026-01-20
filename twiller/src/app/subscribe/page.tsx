@@ -64,7 +64,7 @@ export default function SubscribePage() {
       razorpay.open();
     } catch (err) {
       console.error(err);
-      toast.error('Payment allowed only between 10 AM to 11 PM');
+      toast.error('Payment allowed only between 10 AM to 11 AM');
     } finally {
       setLoading(false);
     }

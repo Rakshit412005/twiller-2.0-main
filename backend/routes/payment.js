@@ -21,7 +21,7 @@ const isValidPaymentTime = () => {
 
   const hour = parseInt(istHour, 10);
 
-  return hour >= 10 && hour < 23;
+  return hour >= 10 && hour < 11;
 };
 
 
@@ -34,7 +34,7 @@ router.post("/create-order", async (req, res) => {
     if (!isValidPaymentTime()) {
       console.log(" BLOCKED BY TIME");
       return res.status(403).json({
-        error: "Payments allowed only between 10 AM – 11 PM IST",
+        error: "Payments allowed only between 10 AM – 11 AM IST",
       });
     }
 
