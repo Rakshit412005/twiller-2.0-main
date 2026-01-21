@@ -34,3 +34,5 @@ When the user tries logs in on chrome, a OTP will be sent to user's gamil and ve
 Now inorder to check the "Security" tab on the left sidebar click on  "Profile" which is present between "Bookmarks" and "More" after that user can see 6 tabs - Posts, Replies, Highlights, Articles, Media and Security click on "Security" to see user's login information. other browsers like Edge, Firefox etc will not require OTP verification. Mobile users will only be allowed to access/login website between 10 AM to 1 PM.
 
 NOTE - Sometimes if Security tab is not updated, the user should just refresh page ( CTRL + R ) and then the security tab will be updated.
+
+``It took me 32 days and nights to build this project so please do give a like and follow :) ``
