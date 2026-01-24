@@ -35,4 +35,4 @@ Now inorder to check the "Security" tab on the left sidebar click on  "Profile" 
 
 NOTE - Sometimes if Security tab is not updated, the user should just refresh page ( CTRL + R ) and then the security tab will be updated.
 
-``It took me 32 days and nights to build this project so please do give a like and follow :) ``
+# It took me 32 days and nights to build this project so please do give a like and follow :) 
